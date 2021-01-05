@@ -3,8 +3,35 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link>
   </div> -->
-  <router-view/>
+  <router-view :msg="dayData" />
 </template>
+
+<script>
+//import * as d3 from "d3";
+import * as adsData from "@/assets/data";
+
+export default {
+  name: 'App',
+  data() {
+    return {
+      dayData: "",
+      politicalData: [],
+    };
+  },
+   mounted() {
+    // Execute function fetchData to get the RDW data
+    this.fetchData();
+   },
+  methods: {
+    async fetchData() {
+      // Fetch the P+R specification data and set value to data()
+      const specData = await adsData.hello();
+      this.dayData = specData[0].maand;
+      console.log(specData);
+    }
+  },
+}
+</script>
 
 <style>
 /* Import external fonts:
@@ -77,14 +104,6 @@ p.summary {
 .top-bar img.logo {
   height: 1.5em;
   margin: 0 0 1em 1em;
-}
-
-#app {
-/* font-family: 'Hanalei Fill', cursive;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50; */
 }
 
 #nav {
