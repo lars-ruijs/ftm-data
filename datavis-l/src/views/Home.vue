@@ -1,7 +1,23 @@
 <template>
  <div class="top-bar">
+   <div class="items-top-bar">
    <img class="eye" src="@/assets/ftm-eye.png" alt="oog FTM">
    <img class="logo" src="@/assets/wordmark.png" alt="Follow the Money">
+   <nav>
+     <ul>
+       <li>Over FTM</li>
+       <li>Auteurs</li>
+       <li>Dossiers</li>
+       <li>Pitch</li>
+       <li>Audio</li>
+     </ul>
+   </nav>
+   <div class="buttongroup">
+     <a class="red button" href="#">Word lid</a>
+     <a class="grey button" href="#">Doneer</a>
+    <a class="transparent button" href="#">Inloggen</a>
+   </div>
+ </div>
  </div>
   <div class="home">
       <h1>Dashboard online advertenties politieke partijen</h1>
@@ -11,7 +27,7 @@
       <p>
         Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
       </p>
-      <BarChartRace :msg="msg"/>
+      <BarChartRace v-if="dayData.length > 0" :dayData="dayData"/>
   </div>
 </template>
 
@@ -22,7 +38,7 @@ import BarChartRace from '@/components/BarChartRace.vue'
 export default {
   name: 'Home',
   props: {
-        msg: {
+        dayData: {
             type: Array,
             required: true
         },

@@ -3,7 +3,8 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link>
   </div> -->
-  <router-view :msg="dayData" />
+  <!-- <router-view :msg="dayData" /> -->
+  <router-view :dayData="dayData" />
 </template>
 
 <script>
@@ -14,7 +15,7 @@ export default {
   name: 'App',
   data() {
     return {
-      dayData: "",
+      dayData: [],
       politicalData: [],
     };
   },
@@ -26,7 +27,7 @@ export default {
     async fetchData() {
       // Fetch the P+R specification data and set value to data()
       const specData = await adsData.hello();
-      this.dayData = specData[0].maand;
+      this.dayData = specData;
       console.log(specData);
     }
   },
@@ -40,7 +41,7 @@ export default {
    Graph text: 'PT Sans', sans-serif;
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@700&family=IBM+Plex+Sans:wght@500&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
   --body-color: #000000;
@@ -57,6 +58,10 @@ export default {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+a {
+  text-decoration: none;
 }
 
 h1, h2, h3 {
@@ -98,12 +103,69 @@ p.summary {
   top: 0;
 }
 
-.top-bar img.eye {
+.items-top-bar img.eye {
   height: 3.8em;
 }
-.top-bar img.logo {
+.items-top-bar img.logo {
   height: 1.5em;
-  margin: 0 0 1em 1em;
+  margin-left: 1em;
+}
+
+.items-top-bar, nav ul {
+  display: flex;
+  align-items: center;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0 1em 0 1em;
+}
+
+nav ul li {
+  background-color: #343a3c;
+  color: #fff;
+  height: 4.5em;
+  vertical-align: middle;
+  line-height: 4.5em;
+  margin-right: 0.5em;
+  padding: 0 0.7em 0 0.7em;
+  text-transform: uppercase;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+}
+
+.red {
+  background-color: var(--ftm-red);
+}
+.button {
+  text-transform: uppercase;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;  
+  color: #fff;
+  padding: 1em;
+  border-radius: 0.2em;
+  margin-left: 0.6em;
+  align-self: flex-start;
+}
+
+.buttongroup .button:last-of-type {
+  margin-right: 2em;;
+}
+
+.buttongroup {
+  margin-left: auto;
+}
+
+.grey {
+  border: 1px solid #fff;
+  background-color: #696d6f;
+}
+
+.transparent {
+  border: 1px solid #fff;
+  background-color: transparent;
 }
 
 #nav {
@@ -118,4 +180,18 @@ p.summary {
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+@media (max-width: 1020px) { 
+  nav ul li {
+    font-size: 10px;
+    margin-right: 0.3em;
+    height: 6em;
+    line-height: 6em;
+  }
+  .button {
+    font-size: 10px;
+    margin-left: 0.3em;
+  }
+ }
+
 </style>

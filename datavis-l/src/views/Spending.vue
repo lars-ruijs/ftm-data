@@ -1,7 +1,7 @@
 <template>
   <div class="barchartrace">
     <h1>Welkom bij de Race!</h1>
-    <BarChartRace :msg="msg"/>
+    <BarChartRace :dayData="dayData"/>
   </div>
 </template>
 
@@ -12,7 +12,7 @@ import BarChartRace from '@/components/BarChartRace.vue'
 export default {
   name: 'Spending',
   props: {
-        msg: {
+        dayData: {
             type: Array,
             required: true
         },
