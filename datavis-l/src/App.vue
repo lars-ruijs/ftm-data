@@ -60,6 +60,11 @@ export default {
   padding: 0;
 }
 
+.tick text {
+  font-family: var(--ftm-graph);
+  font-size: 1.2em;
+}
+
 a {
   text-decoration: none;
 }

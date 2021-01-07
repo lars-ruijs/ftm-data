@@ -1,10 +1,6 @@
 <template>
-  <div class="hello">
-      <h2>Hallo van Bar chart</h2>
-      <h2>Hoi</h2>
       <div id="barchartdiv">
       </div>
-  </div>
 </template>
 
 <script>
@@ -43,7 +39,7 @@ export default {
       .sort(([a], [b]) => d3.ascending(a, b));
 
     // Display settings
-    const margin = ({top: 16, right: 90, bottom: 6, left: 0})
+    const margin = ({top: 16, right: 80, bottom: 6, left: 0})
     const barSize = 48
     
     // Maximum number of bars
@@ -149,7 +145,7 @@ export default {
 
     function ticker(svg) {
         const nu = svg.append("text")
-            .style("font", `bold 10px Arial`)
+            .style("font", `bold 1em var(--ftm-graph)`)
             .style("font-variant-numeric", "tabular-nums")
             .attr("text-anchor", "end")
             .attr("x", width - 6)
@@ -164,26 +160,66 @@ export default {
 
    console.log("AXIS-TICK", axis, ticker);
 
-    function color() {
-        const scale = d3.scaleOrdinal(d3.schemeTableau10);
-        if (data.some(d => d.partij !== undefined)) {
-            const categoryByName = new Map(data.map(d => [d.partij, d.partij]))
-            scale.domain(Array.from(categoryByName.values()));
-            return d => scale(categoryByName.get(d.partij));
+    function color(party) {
+        let color = "";
+        switch(party) {
+            case "D66":
+                color = "#B2DF8A";                
+            break;
+            case "Forum voor Democratie":
+            case "FvD":
+                color = "#9C1616";                
+            break;
+            case "VVD":
+                color = "#FA9600";                
+            break;
+            case "GroenLinks":
+                color = "#43B825";                
+            break;
+            case "CDA":
+                color = "#438A69";                
+            break;
+            case "PvdA":
+                color = "#FB9B98";                
+            break;
+            case "SP":
+                color = "#DC3230";                
+            break;
+            case "PvdD":
+                color = "#B15929";                
+            break;
+            case "SGP":
+                color = "#F0F025";                
+            break;
+            case "DENK":
+                color = "#53C5C9";                
+            break;
+            case "CU":
+            case "Christen Unie":
+            case "ChristenUnie":
+                color = "#1F78B4";                
+            break;
+            case "50 Plus":
+            case "50Plus":
+                color = "#972EBA";                
+            break;
+            case "PVV":
+                color = "#88C6C1";                
+            break;
         }
-    return d => scale(d.partij);
+    return color;
     }
 
     function bars(svg) {
         let bar = svg.append("g")
-            .attr("fill-opacity", 0.6)
             .selectAll("rect");
 
         return ([, data], transition) => bar = bar
+        
             .data(data.slice(0, n), d => d.partij)
             .join(
             enter => enter.append("rect")
-                .attr("fill", color())
+                .attr("fill", d => color(d.partij))
                 .attr("height", y.bandwidth())
                 .attr("x", x(0))
                 .attr("y", d => y((prev.get(d) || d).ranking))
@@ -195,7 +231,7 @@ export default {
             )
             .call(bar => bar.transition(transition)
             .attr("y", d => y(d.ranking))
-            .attr("width", d => x(d.midden) - x(0)));
+            .attr("width", d => x(d.midden) - x(0)))
     }
 
     console.log("BARS", bars(svg));
