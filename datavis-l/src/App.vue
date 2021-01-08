@@ -69,6 +69,11 @@ a {
   text-decoration: none;
 }
 
+button {
+  outline: none;
+  border: none;
+}
+
 h1, h2, h3 {
   font-family: var(--ftm-title);
   color: var(--body-color);

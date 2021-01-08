@@ -1,5 +1,6 @@
 <template>
       <div id="barchartdiv">
+          <button class="controls red button">Pauzeer</button>
       </div>
 </template>
 
@@ -14,17 +15,46 @@ export default {
             required: true
         },
   },
+  data() {
+    return {
+      width: 0,
+    };
+  },
+  created() {
+        window.addEventListener('resize', this.resize);
+        this.resize();
+    },
+    unmounted() {
+        window.removeEventListener('resize', this.resize);
+    },
   mounted() {
         // Build the Pie chart with the buildPieChart-function when element gets mounted
         this.makeBarChart();
   },
   methods: {
+    
+    resize() {
+        if (window.innerWidth >= 1165) {
+            this.width = 700;
+            return 700;
+        }
+        else if (window.innerWidth < 1165 && window.innerWidth > 860) {
+            this.width = 500;
+            return 500;
+        }
+        else {
+            this.width = 300;
+            return 300;
+        }
+    },
       
     async makeBarChart() {
 
         // d.value === d.midden
         // d.name === d.partij
         // d.date === d.datum
+    console.log("TOP OF FUNCTION");
+        const vm = this;
 
     //The data
     const data = this.dayData;
@@ -43,13 +73,13 @@ export default {
     const barSize = 48
     
     // Maximum number of bars
-    const n = 12
+    const n = 13
     // Speed between dates displayed
-    const k = 3
+    const k = 0.5
     // Duration between keyframes
-    const duration = 100
+    const duration = 180
 
-    const width = 700;
+    //const width = 700;
     const height = margin.top + barSize * n + margin.bottom
 
     const locale = d3.formatLocale({
@@ -78,12 +108,12 @@ export default {
     // Appending SVG element to div
     const svg = d3.select("#barchartdiv")
             .append("svg")
-                .attr("width", width)
+                .attr("width", this.width)
                 .attr("height", height)
                 .attr('class', 'barchart')
 
     // Setting X & Y scales
-    const x = d3.scaleLinear([0, 1], [margin.left, width - margin.right]);
+    const x = d3.scaleLinear([0, 1], [margin.left, this.width - margin.right]);
     const y = d3.scaleBand()
     .domain(d3.range(n + 1))
     .rangeRound([margin.top, margin.top + barSize * (n + 1 + 0.1)])
@@ -129,7 +159,7 @@ export default {
 
         const axis = d3.axisTop(x)
             .tickFormat(euroFormat)
-            .ticks(width / 160)
+            .ticks(vm.width / 160)
             .tickSizeOuter(0)
             .tickSizeInner(-barSize * (n + y.padding()));
 
@@ -143,17 +173,19 @@ export default {
 
     console.log("AXIS", axis);
 
+    // Keyframes 0 0 is the first date
     function ticker(svg) {
         const nu = svg.append("text")
             .style("font", `bold 1em var(--ftm-graph)`)
             .style("font-variant-numeric", "tabular-nums")
             .attr("text-anchor", "end")
-            .attr("x", width - 6)
+            .attr("x", vm.width - 6)
             .attr("y", margin.top + barSize * (n - 0.45))
             .attr("dy", "0.32em")
             .text(formatDate(keyframes[0][0]));
 
         return ([date], transition) => {
+            //console.log("DATE", date);
             transition.end().then(() => nu.text(formatDate(date)));
         };
     }
@@ -282,29 +314,131 @@ export default {
 
     console.log("LABELS", labels(svg));
 
+    d3.select("button").on("click", function() {
+    if (this.innerHTML === "Pauzeer") {
+        this.innerHTML = "Hervat";
+        stop();
+    } else if (this.innerHTML === "Hervat") {
+        this.innerHTML = "Pauzeer";
+        start();
+    } else {
+        this.innerHTML = "Pauzeer";
+        console.log(0);
+        render();
+    }
+    });
+
+    let elapsedTime = duration;
+    let currentDataSetIndex = 0;
+
+    function stop() {
+        console.log("STOP");
+        svg.interrupt();
+    }
+
+    function start() {
+        render(currentDataSetIndex);
+        console.log("START");
+    }
+
     const updateBars = bars(svg);
     const updateAxis = axis(svg);
     const updateLabels = labels(svg);
     const updateTicker = ticker(svg);
 
-    for (const keyframe of keyframes) {
-        const transition = svg.transition()
-            .duration(duration)
-            .ease(d3.easeLinear);
+    render(0)
 
-        // Extract the top bar’s value.
-        x.domain([0, keyframe[1][0].midden]);
+    console.log("KEFRAME LENG", keyframes.length);
 
-        updateAxis(keyframe, transition);
-        updateBars(keyframe, transition);
-        updateLabels(keyframe, transition);
-        updateTicker(keyframe, transition);
+    async function render(index = 0) {
 
-        //console.log(keyframe);
+        console.log("INDEX", index);
 
-        await transition.end().then(() => {//console.log("ENDED")
-        });
-    }
+    currentDataSetIndex = index;
+
+    const transition = svg.transition()
+      .transition()
+      .duration(elapsedTime)
+      .ease(d3.easeLinear)
+      .on("end", () => {
+        if (index < keyframes.length) {
+          elapsedTime = duration;
+          render(index + 1);
+        } else {
+          d3.select(".controls").text("Afspelen");
+        }
+      })
+      .on("interrupt", () => {
+          console.log("INTERUPTED");
+      });
+    
+        if (index < keyframes.length) { 
+            x.domain([0, keyframes[index][1][0].midden]);
+            updateAxis(keyframes[index], transition);
+            updateBars(keyframes[index], transition);
+            updateLabels(keyframes[index], transition);
+            updateTicker(keyframes[index], transition);
+        }
+
+    await transition.end().then(() => {//console.log("ENDED")
+    })
+  }
+
+// maak();
+
+//     function maak(index = 0){
+//         currentDataSetIndex = index;
+//         timerStart = d3.now();
+
+//         for (const frame in keyframes) {
+//         const transition = svg.transition()
+//             .duration(elapsedTime)
+//             .ease(d3.easeLinear)
+//             .on("end", () => {
+//             if (frame < keyframes.length) {
+//             currentDataSetIndex + 1;
+//             } else {
+//             d3.select(".controls").text("Play");
+//             }
+//             })
+//             .on("interrupt", () => {
+//             timerEnd = d3.now();
+//             });
+
+//             x.domain([0, keyframes[frame][1][0].midden]);
+
+//             if (frame < keyframes.length) {        
+//             updateAxis(keyframes[frame], transition);
+//             updateBars(keyframes[frame], transition);
+//             updateLabels(keyframes[frame], transition);
+//             updateTicker(keyframes[frame], transition);
+//             }
+
+
+//     }
+// }
+
+    // for (const keyframe of keyframes) {
+    //     const transition = svg.transition()
+    //         .duration(duration)
+    //         .ease(d3.easeLinear);
+
+    //     // Extract the top bar’s value.
+    //     x.domain([0, keyframe[1][0].midden]);
+
+    //     // KEYFRAME = Array met datum en rankings
+    //     //console.log("KEYFRAME", keyframe)
+
+    //     updateAxis(keyframe, transition);
+    //     updateBars(keyframe, transition);
+    //     updateLabels(keyframe, transition);
+    //     updateTicker(keyframe, transition);
+
+    //     //console.log(keyframe);
+
+    //     await transition.end().then(() => {//console.log("ENDED")
+    //     });
+    // }
 
 
 // svg.interrupt()
