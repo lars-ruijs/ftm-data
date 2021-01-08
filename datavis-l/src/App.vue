@@ -178,6 +178,10 @@ nav ul li {
   background-color: transparent;
 }
 
+svg.frameslider g.tick, svg.frameslider g.parameter-value text  {
+  display: none;
+}
+
 #nav {
   padding: 30px;
 }

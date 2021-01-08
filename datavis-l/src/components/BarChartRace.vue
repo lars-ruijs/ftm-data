@@ -6,6 +6,7 @@
 
 <script>
 import * as d3 from "d3";
+import { sliderBottom } from "d3-simple-slider";
 
 export default {
   name: 'BarChartRace',
@@ -70,14 +71,14 @@ export default {
 
     // Display settings
     const margin = ({top: 16, right: 80, bottom: 6, left: 0})
-    const barSize = 48
+    const barSize = 40
     
     // Maximum number of bars
     const n = 13
     // Speed between dates displayed
-    const k = 0.5
+    const k = 0.8
     // Duration between keyframes
-    const duration = 180
+    const duration = 350
 
     //const width = 700;
     const height = margin.top + barSize * n + margin.bottom
@@ -152,6 +153,42 @@ export default {
 
     const next = new Map(nameframes.flatMap(([, data]) => d3.pairs(data)));
     console.log("NEXT", next);
+
+//      // Time
+//   var dataTime = d3.range(0, 10).map(function(d) {
+//     return new Date(1995 + d, 10, 3);
+//   });
+
+    const datums = new Set(data.map(d => d.maand))
+    console.log(datums);
+
+    var dataDates = [...datums].map(function(d) {
+    return new Date(d);
+  });
+    
+    console.log(dataDates);
+
+ var sliderStep =
+    sliderBottom()
+    .min(0)
+    .max((keyframes.length) - 1)
+    .width(this.width-margin.right+30)
+    .step(1)
+    .on('drag', () => {svg.interrupt()})
+    .on('end', val => {
+        render(val);
+    });
+
+  var gStep = d3
+    .select('#barchartdiv')
+    .append('svg')
+    .attr('width', this.width)
+    .attr('height', 30)
+    .attr('class', 'frameslider')
+    .append('g')
+    .attr('transform', 'translate(30,10)');
+
+  gStep.call(sliderStep);
 
     function axis(svg) {
         const g = svg.append("g")
@@ -352,17 +389,18 @@ export default {
 
     async function render(index = 0) {
 
-        console.log("INDEX", index);
+    console.log("INDEX", index);
 
     currentDataSetIndex = index;
 
     const transition = svg.transition()
       .transition()
       .duration(elapsedTime)
-      .ease(d3.easeLinear)
+      .ease(d3.easeSinInOut)
       .on("end", () => {
         if (index < keyframes.length) {
           elapsedTime = duration;
+          d3.select(".controls").text("Pauzeer");
           render(index + 1);
         } else {
           d3.select(".controls").text("Afspelen");
@@ -373,6 +411,7 @@ export default {
       });
     
         if (index < keyframes.length) { 
+            sliderStep.value(index)
             x.domain([0, keyframes[index][1][0].midden]);
             updateAxis(keyframes[index], transition);
             updateBars(keyframes[index], transition);
@@ -382,7 +421,64 @@ export default {
 
     await transition.end().then(() => {//console.log("ENDED")
     })
+
+
+    // //var moving = false;
+    // var currentValue = 0;
+    // var targetValue = 500;
+
+    // //var playButton = d3.select("#play-button");
+        
+    // var xScale = d3.scaleTime()
+    //     .domain([keyframes[0][0], keyframes[keyframes.length - 1][0]])
+    //     .range([0, targetValue])
+    //     .clamp(true);
+
+    // var slider = svg.append("g")
+    //     .attr("class", "slider")
+    //     .attr("transform", "translate(" + margin.left + "," + height/5 + ")");
+
+    // slider.append("line")
+    //     .attr("class", "track")
+    //     .attr("x1", xScale.range()[0])
+    //     .attr("x2", xScale.range()[1])
+    // .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    //     .attr("class", "track-inset")
+    // .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    //     .attr("class", "track-overlay")
+    //     .call(d3.drag()
+    //         .on("start.interrupt", function() { slider.interrupt(); })
+    //         .on("start drag", function() {
+    //         currentValue = d3.event.x;
+    //         console.log(currentValue);
+    //         //update(x.invert(currentValue)); 
+    //         })
+    //     );
+
+    // slider.insert("g", ".track-overlay")
+    //     .attr("class", "ticks")
+    //     .attr("transform", "translate(0," + 18 + ")")
+    // .selectAll("text")
+    //     .data(xScale.ticks(10))
+    //     .enter()
+    //     .append("text")
+    //     .attr("x", xScale)
+    //     .attr("y", 10)
+    //     .attr("text-anchor", "middle")
+    //     .text(function(d) { return formatDate(d); });
+
+    // slider.insert("circle", ".track-overlay")
+    //     .attr("class", "handle")
+    //     .attr("r", 9);
+
+    // slider.append("text")  
+    //     .attr("class", "label")
+    //     .attr("text-anchor", "middle")
+    //     .text(formatDate(keyframes[0][0]))
+    //     .attr("transform", "translate(0," + (-25) + ")")
+
   }
+
 
 // maak();
 
