@@ -21,3 +21,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  div.barchartrace {
+    max-width: 80vw;
+  }
+</style>

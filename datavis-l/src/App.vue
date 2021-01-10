@@ -72,6 +72,7 @@ a {
 button {
   outline: none;
   border: none;
+  cursor: pointer;
 }
 
 h1, h2, h3 {
@@ -111,6 +112,7 @@ p.summary {
   background-color: #292f32;
   position: fixed;
   top: 0;
+  z-index: 999;
 }
 
 .items-top-bar img.eye {
@@ -148,6 +150,11 @@ nav ul li {
 .red {
   background-color: var(--ftm-red);
 }
+
+.red:hover {
+  background-color: #e2514f;
+}
+
 .button {
   text-transform: uppercase;
   font-family: 'IBM Plex Sans', sans-serif;
@@ -182,6 +189,58 @@ svg.frameslider g.tick, svg.frameslider g.parameter-value text  {
   display: none;
 }
 
+svg.frameslider path.handle {
+  fill: var(--ftm-red);
+  stroke: transparent;
+}
+
+svg.frameslider path.handle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+svg.frameslider line.track-inset {
+  stroke:transparent;
+}
+
+#barchartdiv {
+  position: relative;
+}
+
+.controls {
+  position: absolute;
+  bottom: 7em;
+  left: 1em;
+}
+
+svg.scaledates g.slider line, svg.scaledates g.slider path {
+  display: none;
+}
+
+svg.scaledates {
+  margin-top: -0.85em;
+}
+
+g.parameter-value text {
+  font-family: var(--ftm-graph);
+  font-size: 12px;
+  fill: rgb(170, 170, 170);
+}
+
+div.tooltip {	
+ position: absolute;
+  text-align: center;
+  max-width: 100%;
+  max-height: 100%;
+  padding: 0.8em;
+  font: 0.8em var(--ftm-graph);
+  background-color: black;
+  border: 0;
+  border-radius: 8px;
+  pointer-events: none;
+  color: white;
+}
+
 #nav {
   padding: 30px;
 }
@@ -202,9 +261,12 @@ svg.frameslider g.tick, svg.frameslider g.parameter-value text  {
     height: 6em;
     line-height: 6em;
   }
-  .button {
+  .button:not(.controls) {
     font-size: 10px;
     margin-left: 0.3em;
+  }
+  .home {
+    width: 70%;
   }
  }
 

@@ -1,6 +1,5 @@
 <template>
       <div id="barchartdiv">
-          <button class="controls red button">Pauzeer</button>
       </div>
 </template>
 
@@ -49,7 +48,7 @@ export default {
         }
     },
       
-    async makeBarChart() {
+    makeBarChart() {
 
         // d.value === d.midden
         // d.name === d.partij
@@ -70,13 +69,13 @@ export default {
       .sort(([a], [b]) => d3.ascending(a, b));
 
     // Display settings
-    const margin = ({top: 16, right: 80, bottom: 6, left: 0})
-    const barSize = 40
+    const margin = ({top: 16, right: 80, bottom: 30, left: 10})
+    const barSize = 37
     
     // Maximum number of bars
     const n = 13
     // Speed between dates displayed
-    const k = 0.8
+    const k = 1
     // Duration between keyframes
     const duration = 350
 
@@ -104,7 +103,7 @@ export default {
         "shortMonths": ["jan", "feb", "maa", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
     })
 
-    const formatDate = lokaal.utcFormat("%d %B %Y")
+    const formatDate = lokaal.utcFormat("%e %B %Y")
 
     // Appending SVG element to div
     const svg = d3.select("#barchartdiv")
@@ -154,6 +153,24 @@ export default {
     const next = new Map(nameframes.flatMap(([, data]) => d3.pairs(data)));
     console.log("NEXT", next);
 
+    d3.select("#barchartdiv")
+    .append("button")
+    .attr("class", "controls red button")
+    .text("Pauzeer")
+    .on("click", function() {
+    if (this.innerHTML === "Pauzeer") {
+        this.innerHTML = "Hervat";
+        stop();
+    } else if (this.innerHTML === "Hervat") {
+        this.innerHTML = "Pauzeer";
+        start();
+    } else {
+        this.innerHTML = "Pauzeer";
+        console.log(0);
+        render();
+    }
+    });
+
 //      // Time
 //   var dataTime = d3.range(0, 10).map(function(d) {
 //     return new Date(1995 + d, 10, 3);
@@ -167,6 +184,7 @@ export default {
   });
     
     console.log(dataDates);
+    
 
  var sliderStep =
     sliderBottom()
@@ -174,9 +192,19 @@ export default {
     .max((keyframes.length) - 1)
     .width(this.width-margin.right+30)
     .step(1)
-    .on('drag', () => {svg.interrupt()})
-    .on('end', val => {
+    .fill('var(--ftm-red)')
+    .handle(
+      d3
+        .symbol()
+        .type(d3.symbolCircle)
+        .size(250)()
+    )
+    .on('start', val => {
         render(val);
+    })
+    .on('drag', val => {
+    svg.interrupt() 
+    render(val);
     });
 
   var gStep = d3
@@ -186,9 +214,77 @@ export default {
     .attr('height', 30)
     .attr('class', 'frameslider')
     .append('g')
-    .attr('transform', 'translate(30,10)');
+    .attr('transform', 'translate(36,10)');
 
   gStep.call(sliderStep);
+
+//   const timeLine = d3.select("#barchartdiv").append("svg")
+//       .attr("width", this.width)
+//       .attr("height", 30);
+    
+    const xTime = d3.scaleTime()
+    .domain([keyframes[0][0], keyframes[(keyframes.length) - 1][0]])
+    .range([0, this.width-30]);
+
+//     const xTimeAxis = d3.axisBottom(xTime)
+//     .ticks(d3.timeMonth.every(1))
+//     .tickFormat(lokaal.utcFormat("%e %B"));
+
+//     timeLine.append("g")
+//     .attr("transform", "translate(5,10)")
+//     .call(xTimeAxis);
+
+var sliderTime =
+    sliderBottom()
+    .min(d3.min(dataDates))
+    .max(d3.max(dataDates))
+    .width(this.width-margin.right+30)
+    .tickFormat(lokaal.utcFormat('%B'))
+    .tickValues(dataDates);
+
+  var gTime = d3
+    .select('#barchartdiv')
+    .append('svg')
+    .attr('class', 'scaledates')
+    .attr('width', this.width)
+    .attr('height', 55)
+    .append('g')
+    .attr('transform', 'translate(30,17)');
+
+  gTime.call(sliderTime);
+
+const extraData = [{datum: "2020-09-01", gebeurtenis: "Begin waarnemingen"}, {datum: "2020-12-10", gebeurtenis: "Hugo de Jonge stapt op als lijsttrekker CDA"}]
+
+const div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
+gTime.selectAll("capacityCircles")
+            .data(extraData)
+            .enter()
+            .append('circle')
+            .attr('cx', function (d) {
+                const cx = xTime(new Date(d.datum));
+                return cx;
+            })
+            .attr('cy', "-6")
+            .attr('r', "6")
+            .attr('fill', 'var(--link-color)')
+            .on("mouseover", function(event, d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div.html(`${d.gebeurtenis}`)	
+                .style("left", (event.pageX - 20) + "px")		
+                .style("top", (event.pageY + 17) + "px");	
+            })					
+            .on("mouseout", function() {		
+                div.transition()		
+                    .duration(500)		
+                    .style("opacity", 0);	
+            });
+
+
 
     function axis(svg) {
         const g = svg.append("g")
@@ -217,13 +313,13 @@ export default {
             .style("font-variant-numeric", "tabular-nums")
             .attr("text-anchor", "end")
             .attr("x", vm.width - 6)
-            .attr("y", margin.top + barSize * (n - 0.45))
+            .attr("y", margin.top + barSize * (n - 0.05))
             .attr("dy", "0.32em")
             .text(formatDate(keyframes[0][0]));
 
         return ([date], transition) => {
             //console.log("DATE", date);
-            transition.end().then(() => nu.text(formatDate(date)));
+            transition.end().then(() => nu.text(formatDate(date))).catch(() => {});
         };
     }
 
@@ -351,19 +447,19 @@ export default {
 
     console.log("LABELS", labels(svg));
 
-    d3.select("button").on("click", function() {
-    if (this.innerHTML === "Pauzeer") {
-        this.innerHTML = "Hervat";
-        stop();
-    } else if (this.innerHTML === "Hervat") {
-        this.innerHTML = "Pauzeer";
-        start();
-    } else {
-        this.innerHTML = "Pauzeer";
-        console.log(0);
-        render();
-    }
-    });
+    // d3.select("button").on("click", function() {
+    // if (this.innerHTML === "Pauzeer") {
+    //     this.innerHTML = "Hervat";
+    //     stop();
+    // } else if (this.innerHTML === "Hervat") {
+    //     this.innerHTML = "Pauzeer";
+    //     start();
+    // } else {
+    //     this.innerHTML = "Pauzeer";
+    //     console.log(0);
+    //     render();
+    // }
+    // });
 
     let elapsedTime = duration;
     let currentDataSetIndex = 0;
@@ -394,7 +490,6 @@ export default {
     currentDataSetIndex = index;
 
     const transition = svg.transition()
-      .transition()
       .duration(elapsedTime)
       .ease(d3.easeSinInOut)
       .on("end", () => {
@@ -413,14 +508,15 @@ export default {
         if (index < keyframes.length) { 
             sliderStep.value(index)
             x.domain([0, keyframes[index][1][0].midden]);
+            updateTicker(keyframes[index], transition);
             updateAxis(keyframes[index], transition);
             updateBars(keyframes[index], transition);
             updateLabels(keyframes[index], transition);
-            updateTicker(keyframes[index], transition);
         }
 
     await transition.end().then(() => {//console.log("ENDED")
-    })
+    }).catch(() => {});
+
 
 
     // //var moving = false;
@@ -549,7 +645,9 @@ export default {
 //     return d => scale(d.name);
 // }
 
-  }
+
+
+  },
 }
 }
 </script>
