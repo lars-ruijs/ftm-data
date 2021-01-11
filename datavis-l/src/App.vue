@@ -4,7 +4,7 @@
     <router-link to="/about">About</router-link>
   </div> -->
   <!-- <router-view :msg="dayData" /> -->
-  <router-view :dayData="dayData" />
+  <router-view :dayData="dayData" :eventData="eventData" />
 </template>
 
 <script>
@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       dayData: [],
-      politicalData: [],
+      eventData: [],
     };
   },
    mounted() {
@@ -25,10 +25,13 @@ export default {
    },
   methods: {
     async fetchData() {
-      // Fetch the P+R specification data and set value to data()
-      const specData = await adsData.hello();
+      // Fetch the day dashboard data 
+      const specData = await adsData.dayData();
       this.dayData = specData;
-      console.log(specData);
+
+      // Fetch the event dashboard data
+      const events = await adsData.eventData();
+      this.eventData = events;
     }
   },
 }
@@ -46,6 +49,7 @@ export default {
 :root {
   --body-color: #000000;
   --link-color: #39b2b1;
+  --link-hover: #2a8585;
   --ftm-red: #dd3230;
   --ftm-grey: #f6f6f6;
   --ftm-blue: #d1e8ea;
@@ -209,7 +213,7 @@ svg.frameslider line.track-inset {
 
 .controls {
   position: absolute;
-  bottom: 7em;
+  bottom: 7.5em;
   left: 1em;
 }
 

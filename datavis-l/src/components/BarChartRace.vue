@@ -1,6 +1,9 @@
 <template>
       <div id="barchartdiv">
       </div>
+      <p>
+        Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
+      </p>
 </template>
 
 <script>
@@ -11,6 +14,10 @@ export default {
   name: 'BarChartRace',
   props: {
         dayData: {
+            type: Array,
+            required: true
+        },
+        eventData: {
             type: Array,
             required: true
         },
@@ -43,8 +50,8 @@ export default {
             return 500;
         }
         else {
-            this.width = 300;
-            return 300;
+            this.width = 320;
+            return 320;
         }
     },
       
@@ -69,7 +76,7 @@ export default {
       .sort(([a], [b]) => d3.ascending(a, b));
 
     // Display settings
-    const margin = ({top: 16, right: 80, bottom: 30, left: 10})
+    const margin = ({top: 16, right: 80, bottom: 35, left: 5})
     const barSize = 37
     
     // Maximum number of bars
@@ -214,7 +221,7 @@ export default {
     .attr('height', 30)
     .attr('class', 'frameslider')
     .append('g')
-    .attr('transform', 'translate(36,10)');
+    .attr('transform', 'translate(34,10)');
 
   gStep.call(sliderStep);
 
@@ -249,28 +256,30 @@ var sliderTime =
     .attr('width', this.width)
     .attr('height', 55)
     .append('g')
-    .attr('transform', 'translate(30,17)');
+    .attr('transform', 'translate(26.5,17)');
 
   gTime.call(sliderTime);
 
-const extraData = [{datum: "2020-09-01", gebeurtenis: "Begin waarnemingen"}, {datum: "2020-12-10", gebeurtenis: "Hugo de Jonge stapt op als lijsttrekker CDA"}]
+// const extraData = [{datum: "2020-09-01", gebeurtenis: "Begin waarnemingen"}, {datum: "2020-12-10", gebeurtenis: "Hugo de Jonge stapt op als lijsttrekker CDA"}]
 
 const div = d3.select("body").append("div")	
     .attr("class", "tooltip")				
     .style("opacity", 0);
 
 gTime.selectAll("capacityCircles")
-            .data(extraData)
+            .data(this.eventData)
             .enter()
             .append('circle')
             .attr('cx', function (d) {
                 const cx = xTime(new Date(d.datum));
                 return cx;
             })
-            .attr('cy', "-6")
-            .attr('r', "6")
+            .attr('cy', "-8")
+            .attr('r', "5")
             .attr('fill', 'var(--link-color)')
-            .on("mouseover", function(event, d) {		
+            .style("opacity", .8)
+            .on("mouseover", function(event, d) {	
+            d3.select(this).style("fill", "var(--link-hover)");	
             div.transition()		
                 .duration(200)		
                 .style("opacity", .9);		
@@ -278,7 +287,8 @@ gTime.selectAll("capacityCircles")
                 .style("left", (event.pageX - 20) + "px")		
                 .style("top", (event.pageY + 17) + "px");	
             })					
-            .on("mouseout", function() {		
+            .on("mouseout", function() {
+                d3.select(this).style("fill", "var(--link-color)");			
                 div.transition()		
                     .duration(500)		
                     .style("opacity", 0);	

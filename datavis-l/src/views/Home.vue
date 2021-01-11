@@ -27,7 +27,7 @@
       <p>
         Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
       </p>
-      <BarChartRace v-if="dayData.length > 0" :dayData="dayData"/>
+      <BarChartRace v-if="dayData.length > 0 && eventData.length > 0" :dayData="dayData" :eventData="eventData"/>
   </div>
 </template>
 
@@ -39,6 +39,10 @@ export default {
   name: 'Home',
   props: {
         dayData: {
+            type: Array,
+            required: true
+        },
+        eventData: {
             type: Array,
             required: true
         },
