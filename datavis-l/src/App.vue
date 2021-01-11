@@ -238,7 +238,7 @@ div.tooltip {
   max-height: 100%;
   padding: 0.8em;
   font: 0.8em var(--ftm-graph);
-  background-color: black;
+  background-color: #292f32;
   border: 0;
   border-radius: 8px;
   pointer-events: none;

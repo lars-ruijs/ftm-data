@@ -1,6 +1,6 @@
 <template>
   <div class="barchartrace">
-    <BarChartRace :dayData="dayData"/>
+    <BarChartRace v-if="dayData.length > 0 && eventData.length > 0" :dayData="dayData" :eventData="eventData"/>
   </div>
 </template>
 
@@ -12,6 +12,10 @@ export default {
   name: 'Spending',
   props: {
         dayData: {
+            type: Array,
+            required: true
+        },
+        eventData: {
             type: Array,
             required: true
         },

@@ -1,9 +1,6 @@
 <template>
       <div id="barchartdiv">
       </div>
-      <p>
-        Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
-      </p>
 </template>
 
 <script>
@@ -28,19 +25,21 @@ export default {
     };
   },
   created() {
+        // Add event listener that listens to changes in window size. 
         window.addEventListener('resize', this.resize);
         this.resize();
     },
-    unmounted() {
+  unmounted() {
         window.removeEventListener('resize', this.resize);
     },
   mounted() {
-        // Build the Pie chart with the buildPieChart-function when element gets mounted
+        // Build the bar chart race with the makeBarChart-function when element gets mounted
         this.makeBarChart();
   },
   methods: {
     
     resize() {
+        // Set the with of the bar chart race, depending on the viewport width
         if (window.innerWidth >= 1165) {
             this.width = 700;
             return 700;
@@ -56,21 +55,20 @@ export default {
     },
       
     makeBarChart() {
+    
+    // Refer to global View Model
+    const vm = this;
 
-        // d.value === d.midden
-        // d.name === d.partij
-        // d.date === d.datum
-    console.log("TOP OF FUNCTION");
-        const vm = this;
-
-    //The data
+    // The data from the "day dashboard" maintained by FTM
     const data = this.dayData;
-    console.log("DATA", data);
 
     // Unique political party names
     const partijen = new Set(data.map(d => d.partij))
 
     // Spending per unique date per political party
+    // d.midden = average cumulative value
+    // d.datum = date
+    // d.partij = political party name
     const datevalues = Array.from(d3.rollup(data, ([d]) => d.midden, d => d.datum, d => d.partij))
       .map(([date, data]) => [new Date(date), data])
       .sort(([a], [b]) => d3.ascending(a, b));
@@ -81,27 +79,30 @@ export default {
     
     // Maximum number of bars
     const n = 13
-    // Speed between dates displayed
+
+    // Speed between dates displayed (used for keyframes)
+    // The higher the number, the slower the total duration of the animation
     const k = 1
-    // Duration between keyframes
+
+    // Duration between keyframes (in milliseconds)
     const duration = 350
 
-    //const width = 700;
     const height = margin.top + barSize * n + margin.bottom
 
-    const locale = d3.formatLocale({
+    // Format numbers to local (Dutch) format 
+    // Sources: https://github.com/d3/d3-format#locale_format & https://observablehq.com/@d3/d3-format
+    const numLocale = d3.formatLocale({
         "decimal": ",",
         "thousands": ".",
         "grouping": [3],
         "currency": ["€", ""]
     })
 
-    const formatNumber = locale.format(",d")
-    function euroFormat(d) { return '€' + locale.format(",d")(d) }
-
-    const lokaal = d3.timeFormatLocale({
+    // Format time and dates to local (Dutch) format
+    // Source: https://github.com/d3/d3-time-format#locales
+    const timeLocale = d3.timeFormatLocale({
         "dateTime": "%a %b %e %X %Y",
-        "date": "%m/%d/%Y",
+        "date": "%d/%m/%Y",
         "time": "%H:%M:%S",
         "periods": ["AM", "PM"],
         "days": ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"],
@@ -110,14 +111,22 @@ export default {
         "shortMonths": ["jan", "feb", "maa", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
     })
 
-    const formatDate = lokaal.utcFormat("%e %B %Y")
+    // Function used to format numbers to rounded "local" number
+    const formatNumber = numLocale.format(",d")
+
+    // Function used to format numbers to dd-mmmm-yyyy format (eg. 4 november 2020)
+    // %e instead of %d to get "4" instead of "04". Source: https://github.com/d3/d3-time-format#locale_format
+    const formatDate = timeLocale.utcFormat("%e %B %Y")
+
+    // Function used to generate a €-sign with "local" rounded number
+    function euroFormat(d) { return '€' + numLocale.format(",d")(d) }
 
     // Appending SVG element to div
     const svg = d3.select("#barchartdiv")
-            .append("svg")
-                .attr("width", this.width)
-                .attr("height", height)
-                .attr('class', 'barchart')
+        .append("svg")
+            .attr("width", this.width)
+            .attr("height", height)
+            .attr('class', 'barchart')
 
     // Setting X & Y scales
     const x = d3.scaleLinear([0, 1], [margin.left, this.width - margin.right]);
@@ -126,11 +135,8 @@ export default {
     .rangeRound([margin.top, margin.top + barSize * (n + 1 + 0.1)])
     .padding(0.1);
 
-    console.log(n, k, duration, partijen, datevalues);
-    console.log(height);
-    console.log(x);
-    console.log(y);
-
+    // Create a ranking for all political parties per day
+    // Source barchart race: https://observablehq.com/@d3/bar-chart-race-explained
     function rank(value) {
         const data = Array.from(partijen, partij => ({partij, midden: value(partij)}));
         data.sort((a, b) => d3.descending(a.midden, b.midden));
@@ -138,6 +144,9 @@ export default {
         return data;
     }
 
+    // Creating keyframes: frames (per day) that display the ranking and spendings of political parties 
+    // Used for animating between values
+    // Source barchart race: https://observablehq.com/@d3/bar-chart-race-explained
     const keyframes = [];
     let ka, a, kb, b;
     for ([[ka, a], [kb, b]] of d3.pairs(datevalues)) {
@@ -149,136 +158,127 @@ export default {
         ]);
         }
     }
-    console.log("KEYFRAMES VAR", keyframes);
 
+    // Keyframes per political party name + previous and next frames for al parties
+    // Source barchart race: https://observablehq.com/@d3/bar-chart-race-explained
     const nameframes = d3.groups(keyframes.flatMap(([, data]) => data), d => d.partij);
-    console.log("NAMEFRAMES", nameframes);
-
     const prev = new Map(nameframes.flatMap(([, data]) => d3.pairs(data, (a, b) => [b, a])));
-    console.log("PREV", prev);
-
     const next = new Map(nameframes.flatMap(([, data]) => d3.pairs(data)));
-    console.log("NEXT", next);
 
+    // Appending a start/stop button, used for pausing and (re)-starting the animation
+    // Adapted from: https://medium.com/@tarsusi/make-your-own-custom-bar-chart-race-with-d3-js-b7d6cfc4d0bd
     d3.select("#barchartdiv")
-    .append("button")
-    .attr("class", "controls red button")
-    .text("Pauzeer")
-    .on("click", function() {
-    if (this.innerHTML === "Pauzeer") {
-        this.innerHTML = "Hervat";
-        stop();
-    } else if (this.innerHTML === "Hervat") {
-        this.innerHTML = "Pauzeer";
-        start();
-    } else {
-        this.innerHTML = "Pauzeer";
-        console.log(0);
-        render();
-    }
+        .append("button")
+            .attr("class", "controls red button")
+            .text("Pauzeer")
+            .on("click", function() {
+                if (this.innerHTML === "Pauzeer") {
+                    this.innerHTML = "Hervat";
+                    stop();
+                } else if (this.innerHTML === "Hervat") {
+                    this.innerHTML = "Pauzeer";
+                    start();
+                } else {
+                    this.innerHTML = "Pauzeer";
+                    render();
+                }
+            });
+    
+    // Slider for jumping to a specific date (keyframe), using D3 simple slider plugin
+    // Values between 0 and last keyframe
+    // Sources: https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518 & https://github.com/johnwalley/d3-simple-slider
+    const sliderFrame =
+        sliderBottom()
+        .min(0)
+        .max((keyframes.length) - 1)
+        .width(this.width-margin.right+30)
+        .step(1)
+        .fill('var(--ftm-red)')
+        .handle(
+            d3
+            .symbol()
+            .type(d3.symbolCircle)
+            .size(250)()
+        )
+        .on('start', val => {
+            // When clicking somewhere on the slider > render bar chart race with new value
+            render(val);
+        })
+        .on('drag', val => {
+            // When dragging slider > stop bar chart race animation, render with new value
+            svg.interrupt() 
+            render(val);
+        });
+
+    // Apend a new svg (for the slider) to the main bar chart div
+    const gFrameslider = d3
+        .select('#barchartdiv')
+        .append('svg')
+            .attr('width', this.width)
+            .attr('height', 30)
+            .attr('class', 'frameslider')
+        .append('g')
+            .attr('transform', 'translate(34,10)');
+
+    gFrameslider.call(sliderFrame);
+    
+    // Set of unique dates 
+    const dates = new Set(data.map(d => d.maand))
+
+    // Coverting the date strings to real date objects, used for the timeline
+    const dataDates = [...dates].map(function(d) {
+        return new Date(d);
     });
 
-//      // Time
-//   var dataTime = d3.range(0, 10).map(function(d) {
-//     return new Date(1995 + d, 10, 3);
-//   });
+    // Timeline below the keyframe slider. Used D3 simple slider plugin.
+    // Values are dates (in stead of keyframe numbers that are used with the slider)
+    // Sources: https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518 & https://github.com/johnwalley/d3-simple-slider
+    const timeline =
+        sliderBottom()
+        .min(d3.min(dataDates))
+        .max(d3.max(dataDates))
+        .width(this.width-margin.right+30)
+        .tickFormat(timeLocale.utcFormat('%B'))
+        .tickValues(dataDates);
 
-    const datums = new Set(data.map(d => d.maand))
-    console.log(datums);
+    // Append a new svg for the timeline within the main bar chart div. 
+    const gTimeline = d3
+        .select('#barchartdiv')
+        .append('svg')
+            .attr('class', 'scaledates')
+            .attr('width', this.width)
+            .attr('height', 55)
+        .append('g')
+            .attr('transform', 'translate(26.5,17)');
 
-    var dataDates = [...datums].map(function(d) {
-    return new Date(d);
-  });
-    
-    console.log(dataDates);
-    
+    gTimeline.call(timeline);
 
- var sliderStep =
-    sliderBottom()
-    .min(0)
-    .max((keyframes.length) - 1)
-    .width(this.width-margin.right+30)
-    .step(1)
-    .fill('var(--ftm-red)')
-    .handle(
-      d3
-        .symbol()
-        .type(d3.symbolCircle)
-        .size(250)()
-    )
-    .on('start', val => {
-        render(val);
-    })
-    .on('drag', val => {
-    svg.interrupt() 
-    render(val);
-    });
-
-  var gStep = d3
-    .select('#barchartdiv')
-    .append('svg')
-    .attr('width', this.width)
-    .attr('height', 30)
-    .attr('class', 'frameslider')
-    .append('g')
-    .attr('transform', 'translate(34,10)');
-
-  gStep.call(sliderStep);
-
-//   const timeLine = d3.select("#barchartdiv").append("svg")
-//       .attr("width", this.width)
-//       .attr("height", 30);
-    
+    // Create a time scale with d3.scaleTime, used for plotting the circles on the correct dates
+    // Source: https://observablehq.com/@d3/d3-scaletime#scaleUtc
     const xTime = d3.scaleTime()
     .domain([keyframes[0][0], keyframes[(keyframes.length) - 1][0]])
     .range([0, this.width-30]);
-
-//     const xTimeAxis = d3.axisBottom(xTime)
-//     .ticks(d3.timeMonth.every(1))
-//     .tickFormat(lokaal.utcFormat("%e %B"));
-
-//     timeLine.append("g")
-//     .attr("transform", "translate(5,10)")
-//     .call(xTimeAxis);
-
-var sliderTime =
-    sliderBottom()
-    .min(d3.min(dataDates))
-    .max(d3.max(dataDates))
-    .width(this.width-margin.right+30)
-    .tickFormat(lokaal.utcFormat('%B'))
-    .tickValues(dataDates);
-
-  var gTime = d3
-    .select('#barchartdiv')
-    .append('svg')
-    .attr('class', 'scaledates')
-    .attr('width', this.width)
-    .attr('height', 55)
-    .append('g')
-    .attr('transform', 'translate(26.5,17)');
-
-  gTime.call(sliderTime);
-
-// const extraData = [{datum: "2020-09-01", gebeurtenis: "Begin waarnemingen"}, {datum: "2020-12-10", gebeurtenis: "Hugo de Jonge stapt op als lijsttrekker CDA"}]
-
-const div = d3.select("body").append("div")	
+    
+    // Append a div to the body, used as a tooltip
+    const div = d3.select("body").append("div")	
     .attr("class", "tooltip")				
     .style("opacity", 0);
 
-gTime.selectAll("capacityCircles")
-            .data(this.eventData)
-            .enter()
-            .append('circle')
+    // Append circles to the timeline group, using the eventData (used for displaying political events)
+    gTimeline.selectAll("eventCircles")
+        .data(this.eventData)
+        .enter()
+        .append('circle')
             .attr('cx', function (d) {
                 const cx = xTime(new Date(d.datum));
                 return cx;
             })
             .attr('cy', "-8")
-            .attr('r', "5")
+            .attr('r', "5.5")
             .attr('fill', 'var(--link-color)')
             .style("opacity", .8)
-            .on("mouseover", function(event, d) {	
+            .on("mouseover", function(event, d) {
+            // On hover, display the tooltip. Source: https://bl.ocks.org/d3noob/180287b6623496dbb5ac4b048813af52
             d3.select(this).style("fill", "var(--link-hover)");	
             div.transition()		
                 .duration(200)		
@@ -295,7 +295,8 @@ gTime.selectAll("capacityCircles")
             });
 
 
-
+    // Function used to generate the top-axis of the bar chart race, using d3.axisTop
+    // Source barchart race: https://observablehq.com/@d3/bar-chart-race-explained
     function axis(svg) {
         const g = svg.append("g")
             .attr("transform", `translate(0,${margin.top})`);
@@ -314,11 +315,11 @@ gTime.selectAll("capacityCircles")
         };
     }
 
-    console.log("AXIS", axis);
-
+    // Function used to display the date of the current keyframe in the right corner. 
     // Keyframes 0 0 is the first date
+    // Source barchart race: https://observablehq.com/@d3/bar-chart-race-explained
     function ticker(svg) {
-        const nu = svg.append("text")
+        const displayedDate = svg.append("text")
             .style("font", `bold 1em var(--ftm-graph)`)
             .style("font-variant-numeric", "tabular-nums")
             .attr("text-anchor", "end")
@@ -328,13 +329,11 @@ gTime.selectAll("capacityCircles")
             .text(formatDate(keyframes[0][0]));
 
         return ([date], transition) => {
-            //console.log("DATE", date);
-            transition.end().then(() => nu.text(formatDate(date))).catch(() => {});
+            transition.end().then(() => displayedDate.text(formatDate(date))).catch(() => {});
         };
     }
 
-   console.log("AXIS-TICK", axis, ticker);
-
+    // Function used to return the correct color for a political party
     function color(party) {
         let color = "";
         switch(party) {
@@ -382,9 +381,11 @@ gTime.selectAll("capacityCircles")
                 color = "#88C6C1";                
             break;
         }
-    return color;
+        return color;
     }
 
+    // Function used to draw the bars of the bar chart race. 
+    // Source barchart race: https://observablehq.com/@d3/bar-chart-race-explained
     function bars(svg) {
         let bar = svg.append("g")
             .selectAll("rect");
@@ -409,8 +410,8 @@ gTime.selectAll("capacityCircles")
             .attr("width", d => x(d.midden) - x(0)))
     }
 
-    console.log("BARS", bars(svg));
-
+    // Function used to make text transitions possible > here for the spending per party
+    // Source barchart race: https://observablehq.com/@d3/bar-chart-race-explained
     function textTween(a, b) {
         const i = d3.interpolateNumber(a, b);
         return function(t) {
@@ -418,12 +419,8 @@ gTime.selectAll("capacityCircles")
         };
     }
 
-    console.log("TEXTTWEEN", textTween(34, 66));
-    console.log("FORMAT", formatNumber(3400));
-    console.log("FORMAT-EU", euroFormat(3400));
-
-
-
+    // Function used to append the labels with party names and spending values. 
+    // Source barchart race: https://observablehq.com/@d3/bar-chart-race-explained
     function labels(svg) {
         let label = svg.append("g")
             .style("font", "bold 12px var(--ftm-graph)")
@@ -441,10 +438,10 @@ gTime.selectAll("capacityCircles")
                 .attr("dy", "-0.25em")
                 .text(d => d.partij)
                 .call(text => text.append("tspan")
-                .attr("fill-opacity", 0.7)
-                .attr("font-weight", "normal")
-                .attr("x", 10)
-                .attr("dy", "1.15em")),
+                    .attr("fill-opacity", 0.7)
+                    .attr("font-weight", "normal")
+                    .attr("x", 10)
+                    .attr("dy", "1.15em")),
             update => update,
             exit => exit.transition(transition).remove()
                 .attr("transform", d => `translate(${x((next.get(d) || d).midden)},${y((next.get(d) || d).ranking)})`)
@@ -455,22 +452,9 @@ gTime.selectAll("capacityCircles")
             .call(g => g.select("tspan").tween("text", d => textTween((prev.get(d) || d).midden, d.midden))))
     }
 
-    console.log("LABELS", labels(svg));
-
-    // d3.select("button").on("click", function() {
-    // if (this.innerHTML === "Pauzeer") {
-    //     this.innerHTML = "Hervat";
-    //     stop();
-    // } else if (this.innerHTML === "Hervat") {
-    //     this.innerHTML = "Pauzeer";
-    //     start();
-    // } else {
-    //     this.innerHTML = "Pauzeer";
-    //     console.log(0);
-    //     render();
-    // }
-    // });
-
+    // start() stop() functions used to start and pause the animation. 
+    // CurrentDataSetIndex registers the number of the displayed keyframe. 
+    // Adapted from: https://medium.com/@tarsusi/make-your-own-custom-bar-chart-race-with-d3-js-b7d6cfc4d0bd
     let elapsedTime = duration;
     let currentDataSetIndex = 0;
 
@@ -484,39 +468,44 @@ gTime.selectAll("capacityCircles")
         console.log("START");
     }
 
+    // Functions that are called to update the parts of the bar chart race.
+    // Source barchart race: https://observablehq.com/@d3/bar-chart-race-explained
     const updateBars = bars(svg);
     const updateAxis = axis(svg);
     const updateLabels = labels(svg);
     const updateTicker = ticker(svg);
 
+    // Call the render function to render the bar chart race, starting with the first frame. 
     render(0)
 
-    console.log("KEFRAME LENG", keyframes.length);
-
+    // Function used to render the bar chart race with a given frame number (default is 0).
+    // Adapted from: https://medium.com/@tarsusi/make-your-own-custom-bar-chart-race-with-d3-js-b7d6cfc4d0bd 
     async function render(index = 0) {
 
-    console.log("INDEX", index);
+        currentDataSetIndex = index;
 
-    currentDataSetIndex = index;
+        const transition = svg.transition()
+        .duration(elapsedTime)
+        .ease(d3.easeSinInOut)
+        .on("end", () => {
+            if (index < keyframes.length) {
+                elapsedTime = duration;
+                d3.select(".controls").text("Pauzeer");
 
-    const transition = svg.transition()
-      .duration(elapsedTime)
-      .ease(d3.easeSinInOut)
-      .on("end", () => {
-        if (index < keyframes.length) {
-          elapsedTime = duration;
-          d3.select(".controls").text("Pauzeer");
-          render(index + 1);
-        } else {
-          d3.select(".controls").text("Afspelen");
-        }
-      })
-      .on("interrupt", () => {
-          console.log("INTERUPTED");
-      });
-    
+                // Render next frame
+                render(index + 1);
+            } else {
+                // If frames ended, give option to replay animation.
+                d3.select(".controls").text("Afspelen");
+            }
+        })
+        .on("interrupt", () => {
+            console.log("INTERRUPTED");
+        });
+        
+        // Execute the functions that are used to update the bar chart race. 
         if (index < keyframes.length) { 
-            sliderStep.value(index)
+            sliderFrame.value(index)
             x.domain([0, keyframes[index][1][0].midden]);
             updateTicker(keyframes[index], transition);
             updateAxis(keyframes[index], transition);
@@ -524,139 +513,11 @@ gTime.selectAll("capacityCircles")
             updateLabels(keyframes[index], transition);
         }
 
-    await transition.end().then(() => {//console.log("ENDED")
-    }).catch(() => {});
-
-
-
-    // //var moving = false;
-    // var currentValue = 0;
-    // var targetValue = 500;
-
-    // //var playButton = d3.select("#play-button");
-        
-    // var xScale = d3.scaleTime()
-    //     .domain([keyframes[0][0], keyframes[keyframes.length - 1][0]])
-    //     .range([0, targetValue])
-    //     .clamp(true);
-
-    // var slider = svg.append("g")
-    //     .attr("class", "slider")
-    //     .attr("transform", "translate(" + margin.left + "," + height/5 + ")");
-
-    // slider.append("line")
-    //     .attr("class", "track")
-    //     .attr("x1", xScale.range()[0])
-    //     .attr("x2", xScale.range()[1])
-    // .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-    //     .attr("class", "track-inset")
-    // .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-    //     .attr("class", "track-overlay")
-    //     .call(d3.drag()
-    //         .on("start.interrupt", function() { slider.interrupt(); })
-    //         .on("start drag", function() {
-    //         currentValue = d3.event.x;
-    //         console.log(currentValue);
-    //         //update(x.invert(currentValue)); 
-    //         })
-    //     );
-
-    // slider.insert("g", ".track-overlay")
-    //     .attr("class", "ticks")
-    //     .attr("transform", "translate(0," + 18 + ")")
-    // .selectAll("text")
-    //     .data(xScale.ticks(10))
-    //     .enter()
-    //     .append("text")
-    //     .attr("x", xScale)
-    //     .attr("y", 10)
-    //     .attr("text-anchor", "middle")
-    //     .text(function(d) { return formatDate(d); });
-
-    // slider.insert("circle", ".track-overlay")
-    //     .attr("class", "handle")
-    //     .attr("r", 9);
-
-    // slider.append("text")  
-    //     .attr("class", "label")
-    //     .attr("text-anchor", "middle")
-    //     .text(formatDate(keyframes[0][0]))
-    //     .attr("transform", "translate(0," + (-25) + ")")
-
-  }
-
-
-// maak();
-
-//     function maak(index = 0){
-//         currentDataSetIndex = index;
-//         timerStart = d3.now();
-
-//         for (const frame in keyframes) {
-//         const transition = svg.transition()
-//             .duration(elapsedTime)
-//             .ease(d3.easeLinear)
-//             .on("end", () => {
-//             if (frame < keyframes.length) {
-//             currentDataSetIndex + 1;
-//             } else {
-//             d3.select(".controls").text("Play");
-//             }
-//             })
-//             .on("interrupt", () => {
-//             timerEnd = d3.now();
-//             });
-
-//             x.domain([0, keyframes[frame][1][0].midden]);
-
-//             if (frame < keyframes.length) {        
-//             updateAxis(keyframes[frame], transition);
-//             updateBars(keyframes[frame], transition);
-//             updateLabels(keyframes[frame], transition);
-//             updateTicker(keyframes[frame], transition);
-//             }
-
-
-//     }
-// }
-
-    // for (const keyframe of keyframes) {
-    //     const transition = svg.transition()
-    //         .duration(duration)
-    //         .ease(d3.easeLinear);
-
-    //     // Extract the top bar’s value.
-    //     x.domain([0, keyframe[1][0].midden]);
-
-    //     // KEYFRAME = Array met datum en rankings
-    //     //console.log("KEYFRAME", keyframe)
-
-    //     updateAxis(keyframe, transition);
-    //     updateBars(keyframe, transition);
-    //     updateLabels(keyframe, transition);
-    //     updateTicker(keyframe, transition);
-
-    //     //console.log(keyframe);
-
-    //     await transition.end().then(() => {//console.log("ENDED")
-    //     });
-    // }
-
-
-// svg.interrupt()
-
-//     function color() {
-//         const scale = d3.scaleOrdinal(d3.schemeTableau10);
-//         if (data.some(d => d.category !== undefined)) {
-//             const categoryByName = new Map(data.map(d => [d.name, d.category]))
-//             scale.domain(Array.from(categoryByName.values()));
-//             return d => scale(categoryByName.get(d.name));
-//         }
-//     return d => scale(d.name);
-// }
-
-
-
+        // Wait for the transition to end. 
+        // Catch promise error, generated when animation is interrupted. 
+        // Source: https://stackoverflow.com/questions/37624322/uncaught-in-promise-undefined-error-when-using-with-location-in-facebook-gra
+        await transition.end().then(() => {}).catch(() => {});
+    }
   },
 }
 }
