@@ -24,6 +24,7 @@
       <p class="summary">
         De campagnes voor de Tweede Kamerverkiezingen zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Follow the Money brengt de geldstromen van online advertenties in kaart. Hieruit blijkt dat bijna alle partijen de afgelopen tijd voor tienduizenden euro aan advertenties kochten.
       </p>
+      <StackedBarChart v-if="dayData.length > 0 && targetData.length > 0" :dayData="dayData" :targetData="targetData"/>
       <p>
         Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
       </p>
@@ -37,6 +38,7 @@
 <script>
 // @ is an alias to /src
 import BarChartRace from '@/components/BarChartRace.vue'
+import StackedBarChart from '@/components/StackedBarChart.vue'
 
 export default {
   name: 'Home',
@@ -49,9 +51,14 @@ export default {
             type: Array,
             required: true
         },
+        targetData: {
+            type: Array,
+            required: true
+        },
   },
   components: {
-    BarChartRace
+    BarChartRace,
+    StackedBarChart
   }
 }
 </script>

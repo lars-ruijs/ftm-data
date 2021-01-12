@@ -4,7 +4,7 @@
     <router-link to="/about">About</router-link>
   </div> -->
   <!-- <router-view :msg="dayData" /> -->
-  <router-view :dayData="dayData" :eventData="eventData" />
+  <router-view :dayData="dayData" :eventData="eventData" :targetData="targetData" />
 </template>
 
 <script>
@@ -17,6 +17,7 @@ export default {
     return {
       dayData: [],
       eventData: [],
+      targetData: [],
     };
   },
    mounted() {
@@ -32,6 +33,28 @@ export default {
       // Fetch the event dashboard data
       const events = await adsData.eventData();
       this.eventData = events;
+
+      const target = await adsData.targetData();
+      this.targetData = target;
+      
+      // const partijen = Array.from(new Set(target.map(d => d.partij)));
+      // const leeftijden = Array.from(new Set(target.map(d => d.age)));
+
+      // function makeData(party, age) {
+      //   const spendData = specData.filter(d => d.partij === party);
+      //   const spend = +spendData[(spendData.length) - 1].midden;
+
+      //   const targeted = target.filter(d => d.partij === party && d.age === age);
+      //   const som = d3.sum(Array.from(new Set(targeted.map(d => +d["percentage geslacht/leeftijd"].replace(',', '.')))));
+      //   //const gemid = d3.mean(targeted, d => +d["percentage geslacht/leeftijd"].replace(',', '.'));
+
+      //   const spendTarget = spend / 100 * som;
+      //   const spendElse = spend - spendTarget;
+
+      //   return { partij: party, targetedSpending: Math.round(spendTarget), nonTargetedSpending: Math.round(spendElse), targetedPercentage: som  }
+      // }
+
+      //console.log([makeData("D66", "65+"), makeData("50Plus", "65+")]);
     }
   },
 }
