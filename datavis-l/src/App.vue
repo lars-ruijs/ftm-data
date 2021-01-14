@@ -87,6 +87,19 @@ export default {
   padding: 0;
 }
 
+#chartdiv svg path.domain {
+  display: none;
+}
+
+#chartdiv svg g.y-axis g.tick text {
+  font-size: 1.3em;
+  fill: #aaaaaa;
+}
+
+#chartdiv svg g.y-axis g.tick line {
+  stroke: #aaaaaa;
+}
+
 .tick text {
   font-family: var(--ftm-graph);
   font-size: 1.2em;
