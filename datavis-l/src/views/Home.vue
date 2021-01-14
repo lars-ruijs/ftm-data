@@ -13,6 +13,7 @@
      </ul>
    </nav>
    <div class="buttongroup">
+      <a class="transparent button hidden" href="#">&#x2630; Menu</a>
      <a class="red button" href="#">Word lid</a>
      <a class="grey button" href="#">Doneer</a>
     <a class="transparent button" href="#">Inloggen</a>
@@ -22,20 +23,20 @@
   <div class="home">
       <h1>Dashboard online advertenties politieke partijen</h1>
       <p class="summary">
-        De campagnes voor de Tweede Kamerverkiezingen zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Follow the Money brengt de geldstromen van online advertenties in kaart. Hieruit blijkt dat bijna alle partijen de afgelopen tijd voor tienduizenden euro aan advertenties kochten.
+        De campagnes voor de Tweede Kamerverkiezingen zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Follow the Money brengt de geldstromen van online advertenties in kaart. Hieruit blijkt dat bijna alle partijen de afgelopen tijd voor tienduizenden euro's aan advertenties kochten.
       </p>
       <p>
-        Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
+        In dit dashboard kun je de online campagnestrijd van politieke partijen live volgen tot aan de verkiezingen van de Tweede Kamer op 17 maart 2021. De data in dit dashboard is verzameld vanaf 1 september 2020 en is afkomsting van publicaties vanuit Google en Facebook (Twitter staat politieke advertenties niet toe en op Snapchat wordt niet geadverteerd door politieke partijen). Eerder schreven we al een inleidend artikel over online advertenties van politieke partijen, inclusief reacties van de betreffende partijen. Mocht je het artikel nog niet hebben gelezen, dan vind je het <a href="https://www.ftm.nl/artikelen/politieke-partijen-online-reclame" target="_blank">hier</a>.
       </p>
-      <h2>Race</h2>
+      <h2>Hoeveel geld besteden politieke partijen aan online advertenties?</h2>
        <p>
         Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
       </p>
-      <BarChartRace v-if="dayData.length > 0 && eventData.length > 0" :dayData="dayData" :eventData="eventData"/>
+      <BarChartRace class="marge" v-if="dayData.length > 0 && eventData.length > 0" :dayData="dayData" :eventData="eventData"/>
       <p>
         Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
       </p>
-      <h2>Stacked</h2>
+      <h2>Hoe targetten partijen leeftijdsgroepen?</h2>
       <p>
         Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
       </p>
@@ -73,3 +74,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .marge {
+    margin: 2em 0;
+  }
+</style>

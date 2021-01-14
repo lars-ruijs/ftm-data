@@ -85,6 +85,7 @@ export default {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
 svg {
@@ -133,8 +134,12 @@ h1, h2, h3 {
 }
 
 h1 {
-  font-size: 2.5em;
-  margin: 1em 0;
+  font-size: 3em;
+  margin: 1em 0 0.5em 0;
+}
+
+h2 {
+  margin-top: 2em;
 }
 
 .home h1:first-child {
@@ -145,6 +150,7 @@ p {
   font-family: var(--ftm-body);
   color: var(--body-color);
   margin: 1em 0;
+  line-height: 1.7em;
 }
 
 p.summary {
@@ -224,6 +230,10 @@ nav ul li {
 
 .buttongroup {
   margin-left: auto;
+}
+
+.buttongroup .hidden {
+  display: none;
 }
 
 .grey {
@@ -374,6 +384,19 @@ select#age{
     grid-template-columns: 1fr;
     margin-bottom: 1.5em;
 }
+ }
+
+ @media (max-width: 825px) {
+   nav {
+     display: none;
+   }
+   .buttongroup .hidden {
+    display: inline;
+    margin-right: 1.5em;
+  }
+  .buttongroup .button:nth-last-child(-n+3) {
+    display: none;
+  }
  }
 
 </style>
