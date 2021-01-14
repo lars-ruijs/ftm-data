@@ -74,7 +74,7 @@ export default {
       .sort(([a], [b]) => d3.ascending(a, b));
 
     // Display settings
-    const margin = ({top: 16, right: 80, bottom: 35, left: 5})
+    const margin = ({top: 16, right: 80, bottom: 65, left: 5})
     const barSize = 37
     
     // Maximum number of bars
@@ -273,7 +273,7 @@ export default {
                 const cx = xTime(new Date(d.datum));
                 return cx;
             })
-            .attr('cy', "-8")
+            .attr('cy', "-3")
             .attr('r', "5.5")
             .attr('fill', 'var(--link-color)')
             .style("opacity", .8)
@@ -324,7 +324,7 @@ export default {
             .style("font-variant-numeric", "tabular-nums")
             .attr("text-anchor", "end")
             .attr("x", vm.width - 6)
-            .attr("y", margin.top + barSize * (n - 0.05))
+            .attr("y", margin.top + barSize * (n + 1))
             .attr("dy", "0.32em")
             .text(formatDate(keyframes[0][0]));
 

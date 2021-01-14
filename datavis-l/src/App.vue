@@ -260,7 +260,7 @@ svg.frameslider line.track-inset {
 
 .controls {
   position: absolute;
-  bottom: 7.5em;
+  bottom: 6em;
   left: 1em;
 }
 
@@ -269,7 +269,7 @@ svg.scaledates g.slider line, svg.scaledates g.slider path {
 }
 
 svg.scaledates {
-  margin-top: -0.85em;
+  margin-top: -1em;
 }
 
 g.parameter-value text {
