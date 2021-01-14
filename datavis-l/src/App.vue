@@ -87,6 +87,13 @@ export default {
   padding: 0;
 }
 
+.axis-label {
+  font-family: var(--ftm-graph);
+  font-size: 1.4em;
+  fill: #aaaaaa;
+  font-style: italic;
+}
+
 #chartdiv svg path.domain {
   display: none;
 }

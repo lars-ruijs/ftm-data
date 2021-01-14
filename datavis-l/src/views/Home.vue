@@ -24,11 +24,22 @@
       <p class="summary">
         De campagnes voor de Tweede Kamerverkiezingen zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Follow the Money brengt de geldstromen van online advertenties in kaart. Hieruit blijkt dat bijna alle partijen de afgelopen tijd voor tienduizenden euro aan advertenties kochten.
       </p>
-      <StackedBarChart v-if="dayData.length > 0 && targetData.length > 0" :dayData="dayData" :targetData="targetData"/>
       <p>
         Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
       </p>
+      <h2>Race</h2>
+       <p>
+        Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
+      </p>
       <BarChartRace v-if="dayData.length > 0 && eventData.length > 0" :dayData="dayData" :eventData="eventData"/>
+      <p>
+        Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
+      </p>
+      <h2>Stacked</h2>
+      <p>
+        Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
+      </p>
+      <StackedBarChart v-if="dayData.length > 0 && targetData.length > 0" :dayData="dayData" :targetData="targetData"/>
       <p>
         Op 17 maart 2021 zijn de Tweede Kamerverkiezingen. De campagnes daarvoor zijn inmiddels in volle gang, ook via advertenties op Facebook, Instagram, Google en YouTube. Hieronder zie je hoeveel geld de Nederlandse politieke partijen sinds september bij deze platforms hebben uitgeven.
       </p>
