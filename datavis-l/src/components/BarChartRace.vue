@@ -49,8 +49,8 @@ export default {
             return 500;
         }
         else {
-            this.width = 320;
-            return 320;
+            this.width = 310;
+            return 310;
         }
     },
       

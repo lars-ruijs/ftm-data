@@ -164,7 +164,12 @@ export default {
         
         const z = d3.scaleOrdinal()
 		.range(["var(--ftm-red)", "#d1e8ea", "lightblue"])
-		.domain(keys);
+        .domain(keys);
+        
+        // Append a div to the body, used as a tooltip
+        const div = d3.select("body").append("div")	
+        .attr("class", "tooltipstack")				
+        .style("opacity", 0);
 
         const group = svg.selectAll("g.layer")
 			.data(d3.stack().keys(keys)(data), d => d.key)
@@ -180,7 +185,29 @@ export default {
         
         bars.attr("width", x.bandwidth())
             
-        bars            
+        bars
+            .on("mouseover", function(event, d) {
+            // On hover, display the tooltip. Source: https://bl.ocks.org/d3noob/180287b6623496dbb5ac4b048813af52
+            if (d[0] === 0) {
+                div.html(`€${formatNumber(d[1])}`);
+            }
+            else if (d[0] > 0) {
+                div.html(`€${formatNumber((d[1] - d[0]))}`);
+            }
+            div.style("left", (event.pageX - 20) + "px")		
+                .style("top", (event.pageY + 5) + "px");
+
+            d3.select(this).style("opacity", .4);	
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);			
+            })					
+            .on("mouseout", function() {
+                d3.select(this).style("opacity", 1);			
+                div.transition()		
+                    .duration(500)		
+                    .style("opacity", 0);	
+            })
             .attr("x", d => x(d.data.partij))
             .transition().ease(d3.easeSinOut).duration(300)
 			.attr("y", d => y(d[1]))
@@ -189,6 +216,28 @@ export default {
         bars
         .enter()
         .append("rect")
+            .on("mouseover", function(event, d) {
+            // On hover, display the tooltip. Source: https://bl.ocks.org/d3noob/180287b6623496dbb5ac4b048813af52
+            if (d[0] === 0) {
+                div.html(`€${formatNumber(d[1])}`);
+            }
+            else if (d[0] > 0) {
+                div.html(`€${formatNumber((d[1] - d[0]))}`);
+            }
+            div.style("left", (event.pageX - 20) + "px")		
+                .style("top", (event.pageY + 5) + "px");
+
+            d3.select(this).style("opacity", .4);	
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);			
+            })					
+            .on("mouseout", function() {
+                d3.select(this).style("opacity", 1);			
+                div.transition()		
+                    .duration(500)		
+                    .style("opacity", 0);	
+            })
             .attr("height", d => y(d[0]) - y(d[1]))
             .attr("width", x.bandwidth())
             .attr("x", d => x(d.data.partij))
@@ -348,53 +397,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.gridje {
-    display: grid;
-    grid-template-columns: 0.24fr 1fr;
-}
-.partijselect {
-    display: flex;
-    max-width: 100%;
-    justify-content: center;
-}
-
-label {
-    display: block;
-    font-family: var(--ftm-graph);
-}
-
-select#age{
-    width: 6em;
-    margin: 0.7em 0 1em 0;
-}
-
-.select-css {
-  font-size: 1em;
-  font-family: var(--ftm-graph);
-  font-weight: 700;
-  color: #444;
-  padding: 0.5em 1.4em 0.5em 0.8em;
-  margin: 0.7em 1.7em 0 0;
-  width: 9em;
-  border: 1px solid #aaa;
-  box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
-  border-radius: 0.4em;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='960px' height='560px' viewBox='0 0 960 560' enable-background='new 0 0 960 560' xml:space='preserve'%3E%3Cg id='Rounded_Rectangle_33_copy_4_1_'%3E%3Cpath d='M480,344.181L268.869,131.889c-15.756-15.859-41.3-15.859-57.054,0c-15.754,15.857-15.754,41.57,0,57.431l237.632,238.937 c8.395,8.451,19.562,12.254,30.553,11.698c10.993,0.556,22.159-3.247,30.555-11.698l237.631-238.937 c15.756-15.86,15.756-41.571,0-57.431s-41.299-15.859-57.051,0L480,344.181z'/%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right .7em top 50%;
-  background-size: 1em;
-}
-.select-css:hover {
-  border-color: #888;
-  cursor: pointer;
-}
-.select-css:focus {
-  border-color: #aaa;
-  box-shadow: 0 0 1px 2px var(--ftm-red);  
-  outline: none;
-}
-.select-css option {
-  font-weight:normal;
-}
 </style>

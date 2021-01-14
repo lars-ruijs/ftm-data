@@ -87,6 +87,10 @@ export default {
   padding: 0;
 }
 
+svg {
+  display: block;
+}
+
 .axis-label {
   font-family: var(--ftm-graph);
   font-size: 1.4em;
@@ -129,7 +133,7 @@ h1, h2, h3 {
 }
 
 h1 {
-  font-size: 3em;
+  font-size: 2.5em;
   margin: 1em 0;
 }
 
@@ -274,7 +278,7 @@ g.parameter-value text {
   fill: rgb(170, 170, 170);
 }
 
-div.tooltip {	
+div.tooltip, div.tooltipstack {	
  position: absolute;
   text-align: center;
   max-width: 100%;
@@ -301,6 +305,56 @@ div.tooltip {
   color: #42b983;
 }
 
+.gridje {
+    display: grid;
+    grid-template-columns: 0.24fr 1fr;
+}
+.partijselect {
+    display: flex;
+    max-width: 100%;
+    justify-content: center;
+}
+
+label {
+    display: block;
+    font-family: var(--ftm-graph);
+}
+
+select#age{
+    width: 6em;
+    margin: 0.7em 0 1em 0;
+}
+
+.select-css {
+  font-size: 1em;
+  font-family: var(--ftm-graph);
+  font-weight: 700;
+  color: #444;
+  padding: 0.5em 1.4em 0.5em 0.8em;
+  margin: 0.7em 1.7em 0 0;
+  width: 9em;
+  border: 1px solid #aaa;
+  box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+  border-radius: 0.4em;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='960px' height='560px' viewBox='0 0 960 560' enable-background='new 0 0 960 560' xml:space='preserve'%3E%3Cg id='Rounded_Rectangle_33_copy_4_1_'%3E%3Cpath d='M480,344.181L268.869,131.889c-15.756-15.859-41.3-15.859-57.054,0c-15.754,15.857-15.754,41.57,0,57.431l237.632,238.937 c8.395,8.451,19.562,12.254,30.553,11.698c10.993,0.556,22.159-3.247,30.555-11.698l237.631-238.937 c15.756-15.86,15.756-41.571,0-57.431s-41.299-15.859-57.051,0L480,344.181z'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .7em top 50%;
+  background-size: 1em;
+}
+.select-css:hover {
+  border-color: #888;
+  cursor: pointer;
+}
+.select-css:focus {
+  border-color: #aaa;
+  box-shadow: 0 0 1px 2px var(--ftm-red);  
+  outline: none;
+}
+.select-css option {
+  font-weight:normal;
+}
+
 @media (max-width: 1020px) { 
   nav ul li {
     font-size: 10px;
@@ -313,8 +367,13 @@ div.tooltip {
     margin-left: 0.3em;
   }
   .home {
-    width: 70%;
+    width: 80%;
   }
+
+  div#chartdiv div.gridje {
+    grid-template-columns: 1fr;
+    margin-bottom: 1.5em;
+}
  }
 
 </style>
