@@ -8,7 +8,7 @@
 </template>
 
 <script>
-//import * as d3 from "d3";
+// Import the data fetch file
 import * as adsData from "@/assets/data";
 
 export default {
@@ -34,27 +34,9 @@ export default {
       const events = await adsData.eventData();
       this.eventData = events;
 
+      // Fetch the target dashboard data
       const target = await adsData.targetData();
       this.targetData = target;
-      
-      // const partijen = Array.from(new Set(target.map(d => d.partij)));
-      // const leeftijden = Array.from(new Set(target.map(d => d.age)));
-
-      // function makeData(party, age) {
-      //   const spendData = specData.filter(d => d.partij === party);
-      //   const spend = +spendData[(spendData.length) - 1].midden;
-
-      //   const targeted = target.filter(d => d.partij === party && d.age === age);
-      //   const som = d3.sum(Array.from(new Set(targeted.map(d => +d["percentage geslacht/leeftijd"].replace(',', '.')))));
-      //   //const gemid = d3.mean(targeted, d => +d["percentage geslacht/leeftijd"].replace(',', '.'));
-
-      //   const spendTarget = spend / 100 * som;
-      //   const spendElse = spend - spendTarget;
-
-      //   return { partij: party, targetedSpending: Math.round(spendTarget), nonTargetedSpending: Math.round(spendElse), targetedPercentage: som  }
-      // }
-
-      //console.log([makeData("D66", "65+"), makeData("50Plus", "65+")]);
     }
   },
 }
@@ -324,7 +306,7 @@ div.tooltip, div.tooltipstack {
   color: #42b983;
 }
 
-.gridje {
+.grid {
     display: grid;
     grid-template-columns: 0.24fr 1fr;
     margin-top: 2em;
@@ -345,7 +327,7 @@ select#age{
     margin: 0.7em 0 1em 0;
 }
 
-.select-css {
+.select {
   font-size: 1em;
   font-family: var(--ftm-graph);
   font-weight: 700;
@@ -362,16 +344,16 @@ select#age{
   background-position: right .7em top 50%;
   background-size: 1em;
 }
-.select-css:hover {
+.select:hover {
   border-color: #888;
   cursor: pointer;
 }
-.select-css:focus {
+.select:focus {
   border-color: #aaa;
   box-shadow: 0 0 1px 2px var(--ftm-red);  
   outline: none;
 }
-.select-css option {
+.select option {
   font-weight:normal;
 }
 
@@ -390,7 +372,7 @@ select#age{
     width: 80%;
   }
 
-  div#chartdiv div.gridje {
+  div#chartdiv div.grid {
     grid-template-columns: 1fr;
     margin-bottom: 1.5em;
 }

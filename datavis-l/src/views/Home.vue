@@ -45,6 +45,9 @@
         Met deze data kun je duidelijk zien dat 50Plus haar naam eer aan doet. Zo'n 80% van het advertentiebudget gaat naar de targetting van de doelgroep 65+. Het overige deel wordt besteed aan de doelgroep 55 tot 64 jarigen. Er wordt geen geld besteed aan het targetten van andere leeftijden.  
       </p>
       <h2>Hoe targetten partijen op provincie, leeftijd en gender?</h2>
+       <p>
+        Naast het kunnen targetten op leeftijdsgroep, kunnen de politieke partijen hun advertenties ook richten op specifieke provincies en geslacht van gebruikers. Hieronder kun je een provincie selecteren om vervolgens te zien in welke mate politieke partijen targetten op mannen en vrouwen en welke leeftijdsgroep populair is. 
+      </p>
   </div>
 </template>
 

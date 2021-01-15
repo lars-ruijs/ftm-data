@@ -221,19 +221,13 @@ export default {
             .attr('transform', 'translate(32,10)');
 
     gFrameslider.call(sliderFrame);
-    
-    // // Set of unique dates 
-    // const dates = new Set(data.map(d => d.datum))
 
-    // Coverting the date strings to real date objects, used for the timeline
+    // Coverting the date strings to real date objects (unique values), used for the timeline
     const dataDates = [...(new Set(data.map(d => d.datum)))].map(function(d) {
         return new Date(d);
     });
 
-    // Set of unique dates 
-    //const months = new Set(data.map(d => d.maand))
-
-    // Coverting the date strings to real date objects, used for the timeline
+    // Coverting the month strings to real date objects (unique values), used for the timeline tick values
     const dataMonths = [...(new Set(data.map(d => d.maand)))].map(function(d) {
         return new Date(d);
     });
@@ -249,7 +243,6 @@ export default {
         .tickFormat(timeLocale.utcFormat('%B'))
         .tickValues(dataMonths);
     
-    console.log(dataDates)
     // Append a new svg for the timeline within the main bar chart div. 
     const gTimeline = d3
         .select('#barchartdiv')
@@ -284,11 +277,11 @@ export default {
             })
             .attr('cy', "-3")
             .attr('r', "5.5")
-            .attr('fill', 'var(--link-color)')
-            .style("opacity", .8)
+            .attr("fill", d => color(d.partij))
+            .style("opacity", 1)
             .on("mouseover", function(event, d) {
             // On hover, display the tooltip. Source: https://bl.ocks.org/d3noob/180287b6623496dbb5ac4b048813af52
-            d3.select(this).style("fill", "var(--link-hover)");	
+            d3.select(this).style("opacity", .3);	
             div.transition()		
                 .duration(200)		
                 .style("opacity", .9);		
@@ -297,7 +290,7 @@ export default {
                 .style("top", (event.pageY + 17) + "px");	
             })					
             .on("mouseout", function() {
-                d3.select(this).style("fill", "var(--link-color)");			
+                d3.select(this).style("opacity", 1);			
                 div.transition()		
                     .duration(500)		
                     .style("opacity", 0);	
@@ -388,6 +381,9 @@ export default {
             break;
             case "PVV":
                 color = "#88C6C1";                
+            break;
+            default:
+                color = "var(--link-color)";                
             break;
         }
         return color;

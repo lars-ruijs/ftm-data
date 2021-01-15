@@ -1,25 +1,25 @@
 <template>
       <div id="chartdiv">
-        <div class="gridje">
+        <div class="grid">
             <div>
                 <label for="age">Leeftijd taget: </label>
-                <select id="age" class="select-css" v-if="ages.length > 0" v-model="selectedAge">
-                <option v-for="age in ages" v-bind:key="age">
-                    {{ age }}
-                </option>
+                <select id="age" class="select" v-if="ages.length > 0" v-model="selectedAge">
+                    <option v-for="age in ages" :key="age">
+                        {{ age }}
+                    </option>
                 </select>
             </div>
         <div>
-            <label for="partijselect">Vergelijk twee politieke partijen: </label>
-            <select class="select-css" v-if="parties.length > 0" v-model="selected1">
-            <option v-for="party in parties" v-bind:key="party">
-                {{ party }}
-            </option>
+            <label for="partyselect">Vergelijk twee politieke partijen: </label>
+            <select id="partyselect" class="select" v-if="parties.length > 0" v-model="selected1">
+                <option v-for="party in parties" :key="party">
+                    {{ party }}
+                </option>
             </select>
-        <select class="select-css groei" v-if="parties.length > 0" v-model="selected2">
-            <option v-for="party in parties" v-bind:key="party">
-                {{ party }}
-            </option>
+            <select class="select" v-if="parties.length > 0" v-model="selected2">
+                <option v-for="party in parties" :key="party">
+                    {{ party }}
+                </option>
             </select>
         </div>
         </div>
@@ -67,16 +67,17 @@ export default {
         // Add event listener that listens to changes in window size. 
         window.addEventListener('resize', this.resize);
         this.resize();
-        this.dropy();
+        this.dropdown();
     },
   unmounted() {
         window.removeEventListener('resize', this.resize);
     },
   mounted() {
-        // Build the bar chart race with the makeBarChart-function when element gets mounted
+        // Build the stacked bar chart with the makeBarChart-function when element gets mounted
         this.makeBarChart();
   },
   updated() {
+        // Execute the makeBarChart() function again when data is updated by user. Using the updated() lifecycle.
         this.makeBarChart();
   },
   methods: {
@@ -94,10 +95,12 @@ export default {
         }
     },
 
-    dropy() {
+    dropdown() {
+        // Get a unique array with political party names from the target dataset (used for dropdown)
         const partijen = Array.from(new Set(this.targetData.map(d => d.partij)));
         this.parties = partijen;
 
+        // Get a unique array with age groups based on the target dataset (used for dropdown). 
         const leeftijden = Array.from(new Set(this.targetData.map(d => d.age)));
         this.ages = leeftijden;
     },
@@ -111,38 +114,51 @@ export default {
             "grouping": [3],
             "currency": ["€", ""]
         })
-        //function euroFormat(d) { return '€' + d3.format("s")(d) }
 
+        // Function used to format numbers to rounded "local" number
         const formatNumber = numLocale.format(",d")
 
+        // Refer to global View Model
         const vm = this;
 
+        // Function used to generate an object with filtered data (based on selected options) 
         function makeData(party, age) {
-        const spendData = vm.dayData.filter(d => d.partij === party);
-        const spend = +spendData[(spendData.length) - 1].midden;
 
-        const targeted = vm.targetData.filter(d => d.partij === party && d.age === age);
-        const som = d3.sum(Array.from(new Set(targeted.map(d => +d["percentage geslacht/leeftijd"].replace(',', '.')))));
+            // Get the data about spend budget - filter on selected party. 
+            const spendData = vm.dayData.filter(d => d.partij === party);
+            // Get the last average cumulative spend amound.
+            const spend = +spendData[(spendData.length) - 1].midden;
 
-        const spendTarget = spend / 100 * som;
-        const spendElse = spend - spendTarget;
+            // Filter target dashboard data on the selected party and age group.
+            const targeted = vm.targetData.filter(d => d.partij === party && d.age === age);
+            // Calculate the sum of the unqiue target percentage for the selected party. 
+            const som = d3.sum(Array.from(new Set(targeted.map(d => +d["percentage geslacht/leeftijd"].replace(',', '.')))));
 
-        return { partij: party, nonTargetedSpending: Math.round(spendElse), targetedSpending: Math.round(spendTarget), targetedPercentage: som.toFixed(0), spendTotal: spend }
-      }
+            // Calculate the spend amound on targeted advertising
+            const spendTarget = spend / 100 * som;
+            // Calculate the remaining spend amound
+            const spendElse = spend - spendTarget;
+
+            // Return a filtered data object
+            return { partij: party, nonTargetedSpending: Math.round(spendElse), targetedSpending: Math.round(spendTarget), targetedPercentage: som.toFixed(0), spendTotal: spend }
+        }
         
+        // Make a data-array with the selected options by the user
         const data = [makeData(this.selected1, this.selectedAge), makeData(this.selected2, this.selectedAge)];
-        console.log("DATa", data);
 
+        // Select the svg, set margins and with and height.
         const svg = d3.select("#chart"),
 		margin = {top: this.margin.top, left: this.margin.left, bottom: 0, right: this.margin.right},
 		width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom;
         
+        // X-scale with d3.scaleBand(). Set range to the innerWidth and the domain to the party names. 
         const x = d3.scaleBand()
 		.range([margin.left, width - margin.right])
         .padding(0.2)
         .domain(data.map(d => d.partij));
 
+        // Y-scale with d3.scaleLinear(). Set range to innerHeight and domain from 0 to maximum spend amound.
         const y = d3.scaleLinear()
         .rangeRound([height - margin.bottom, margin.top])
         .domain([0, d3.max(data, d => d.spendTotal)]).nice()
@@ -150,9 +166,10 @@ export default {
         svg.selectAll(".y-axis").transition().duration(750)
             .call(d3.axisLeft(y).ticks(null, "s"))
         
-        const yas= svg.selectAll(".y-axis")
+        const yAx= svg.selectAll(".y-axis")
 
-        yas
+        // Add an axis label to the Y-axis
+        yAx
         .append('text')
                 .attr('class', 'axis-label')
                 .attr('y', -50)
@@ -160,10 +177,12 @@ export default {
                 .attr("transform", `rotate(-90)`)
                 .text("Uitgaven advertenties (in €) →");
 
+        // The order of the displayed stack
         const keys = ["targetedSpending", "nonTargetedSpending"];
         
-        const z = d3.scaleOrdinal()
-		.range(["var(--ftm-red)", "#d1e8ea", "lightblue"])
+        // Scale for the colors with d3.scaleOrdinal
+        const color = d3.scaleOrdinal()
+		.range(["var(--ftm-red)", "#d1e8ea"])
         .domain(keys);
         
         // Append a div to the body, used as a tooltip
@@ -171,6 +190,7 @@ export default {
         .attr("class", "tooltipstack")				
         .style("opacity", 0);
 
+        // Generate the stack layer groups (stacks of the bar chart). Set fill color to color function. 
         const group = svg.selectAll("g.layer")
 			.data(d3.stack().keys(keys)(data), d => d.key)
 
@@ -178,13 +198,14 @@ export default {
 
 		group.enter().append("g")
 			.classed("layer", true)
-			.attr("fill", d => z(d.key));
+			.attr("fill", d => color(d.key));
 
-		const bars = svg.selectAll("g.layer").selectAll("rect")
+        // Generate the bars of the stacked bar chart. 
+        const bars = svg.selectAll("g.layer").selectAll("rect")
             .data(d => d, e => e.data.partij);
         
-        bars.attr("width", x.bandwidth())
-            
+        // Update the existing bars 
+        bars.attr("width", x.bandwidth())   
         bars
             .on("mouseover", function(event, d) {
             // On hover, display the tooltip. Source: https://bl.ocks.org/d3noob/180287b6623496dbb5ac4b048813af52
@@ -212,7 +233,8 @@ export default {
             .transition().ease(d3.easeSinOut).duration(300)
 			.attr("y", d => y(d[1]))
             .attr("height", d => y(d[0]) - y(d[1]))
-            
+         
+        // Append new bars if necessary with enter().
         bars
         .enter()
         .append("rect")
@@ -244,18 +266,24 @@ export default {
             .transition().ease(d3.easeSinOut).duration(400)
             .attr("y", d => y(d[1]))
 
+        // Remove the bars that are no longer needed.
         bars.exit().remove()
 
-		const percentage = svg.selectAll(".percentage")
+        // Select all text elements with the class "percentage" - bind the data to it
+        const percentage = svg.selectAll(".percentage")
             .data(data, d => d.partij);
-            
+        
+        // Update the existing text elements 
         percentage
 		.transition().duration(350)
 			.attr("x", d => x(d.partij) + x.bandwidth() / 2)
 			.attr("y", d => y(d.spendTotal) - 37)
             .text(d => `${d.targetedPercentage}% getarget`)
  
-		percentage.enter().append("text")
+        // Append new text elements if necessary with enter()
+        percentage
+        .enter()
+        .append("text")
 			.attr("class", "percentage")
 			.attr("text-anchor", "middle")
             .attr("x", d => x(d.partij) + x.bandwidth() / 2)
@@ -265,18 +293,24 @@ export default {
             .attr("font-family", "var(--ftm-graph)")
             .attr("fill", "var(--ftm-red)")
 
+        // Remove text elements that are no longer needed
         percentage.exit().remove()
 
+        // Select all text elements with the class "targetspend" - bind the data to it. 
         const text = svg.selectAll(".targetedSpend")
             .data(data, d => d.partij);
-            
+        
+        // Update existing text
         text
 		.transition().duration(350)
 			.attr("x", d => x(d.partij) + x.bandwidth() / 2)
 			.attr("y", d => y(d.spendTotal) - 17)
             .text(d => `€${formatNumber(d.targetedSpending)}`)
  
-		text.enter().append("text")
+        // Append new text elements if necessary with enter()
+        text
+        .enter()
+        .append("text")
 			.attr("class", "targetedSpend")
 			.attr("text-anchor", "middle")
             .attr("x", d => x(d.partij) + x.bandwidth() / 2)
@@ -287,19 +321,20 @@ export default {
             .attr("font-weight", "600")
             .attr("fill", "var(--ftm-red)")
 
+        // Remove text elements that are no longer needed.
         text.exit().remove()
 
-        //svg.select(".x-axis").selectAll("text").remove();
-
+        // Select al images with class "partijimg" - bind the data to it
         const images = svg.select("g.x-axis").selectAll(".partijimg")
-                    .data(data, d => d.partij);
+            .data(data, d => d.partij);
 
+        // Update existing images
         images
-        .attr("width", x.bandwidth())
-        .attr("x", d => x(d.partij) + x.bandwidth() / 110)
-        .attr("href", function (d) { return `https://blissful-mcnulty-cc8e81.netlify.app/images/${d.partij}.png` ; })
+            .attr("width", x.bandwidth())
+            .attr("x", d => x(d.partij) + x.bandwidth() / 110)
+            .attr("href", function (d) { return `https://blissful-mcnulty-cc8e81.netlify.app/images/${d.partij}.png` ; })
         
-                
+        // Append new images if necessary using enter()       
         images      
         .enter()
         .append("svg:image")
@@ -310,91 +345,9 @@ export default {
             .attr("class", "partijimg")
             .attr("href", function (d) { return `https://blissful-mcnulty-cc8e81.netlify.app/images/${d.partij}.png` ; })
         
+        // Remove images that are no longer needed.
         images.exit().remove()
-
-
-        // const totaal = svg.selectAll(".totalSpend")
-        //     .data(data, d => d.partij);
-            
-        // totaal
-		// .transition().duration(350)
-		// 	.attr("x", d => x(d.partij) + x.bandwidth() / 2)
-		// 	.attr("y", `${this.height-35}`)
-        //     .text(d => `€${formatNumber(d.spendTotal)}`)
- 
-		// totaal.enter().append("text")
-		// 	.attr("class", "targetedSpend")
-		// 	.attr("text-anchor", "middle")
-        //     .attr("x", d => x(d.partij) + x.bandwidth() / 2)
-        //     .transition().duration(400)
-		// 	.attr("y", `${this.height-35}`)
-        //     .text(d => `Totaal: €${formatNumber(d.spendTotal)}`)
-        //     .attr("font-family", "var(--ftm-graph)")
-        //     .attr("fill", "#292f32")
-
-        // totaal.exit().remove()
-
-        
-            
-        // const group = svg.selectAll("g.layer")
-        //     .data(d3.stack().keys(keys)(data), d => d.key)
-        
-		// group.enter().append("g")
-		// 	.classed("layer", true)
-        //     .attr("fill", d => z(d.key));
-
-        // group.exit().remove()
-
-        // const testing = svg.selectAll("g.layer");
-
-		// var bars = testing.selectAll(".bartje")
-        //     .data(d => d, e => e.data);
-            
-        // console.log(d3.selectAll("g.layer").selectAll("g.layer"));
-
-        // bars
-        // .transition().duration(750)
-        // .attr("width", x.bandwidth())
-        // .attr("x", d => x(d.data.partij))
-        // .attr("y", d => y(d[1]))
-        // .attr("height", d => y(d[0]) - y(d[1]))
-
-
-        // bars
-        // .enter()
-        // .append("rect")
-        //     .attr("width", x.bandwidth())
-        //     .merge(bars)
-		// 	.attr("x", d => x(d.data.partij))
-		// 	.attr("y", d => y(d[1]))
-        //     .attr("height", d => y(d[0]) - y(d[1]))
-        //     .attr("class", "bartje")
-        
-        // bars.exit().remove()
-
-		// var text = svg.selectAll(".text")
-        //     .data(data, d => d.partij);
-            
-        // text.merge(text)
-		// 	.attr("x", d => x(d.partij) + x.bandwidth() / 2)
-		// 	.attr("y", d => y(d.spendTotal) - 5)
-		// 	.text(d => d.spendTotal)
-
-		// text.enter().append("text")
-		// 	.attr("class", "text")
-		// 	.attr("text-anchor", "middle")
-		// 	.merge(text)
-		// 	.attr("x", d => x(d.partij) + x.bandwidth() / 2)
-		// 	.attr("y", d => y(d.spendTotal) - 5)
-        //     .text(d => d.spendTotal)
-        
-        // text.exit().remove()
-
     },
 }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
