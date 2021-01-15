@@ -218,15 +218,23 @@ export default {
             .attr('height', 30)
             .attr('class', 'frameslider')
         .append('g')
-            .attr('transform', 'translate(34,10)');
+            .attr('transform', 'translate(32,10)');
 
     gFrameslider.call(sliderFrame);
     
-    // Set of unique dates 
-    const dates = new Set(data.map(d => d.maand))
+    // // Set of unique dates 
+    // const dates = new Set(data.map(d => d.datum))
 
     // Coverting the date strings to real date objects, used for the timeline
-    const dataDates = [...dates].map(function(d) {
+    const dataDates = [...(new Set(data.map(d => d.datum)))].map(function(d) {
+        return new Date(d);
+    });
+
+    // Set of unique dates 
+    //const months = new Set(data.map(d => d.maand))
+
+    // Coverting the date strings to real date objects, used for the timeline
+    const dataMonths = [...(new Set(data.map(d => d.maand)))].map(function(d) {
         return new Date(d);
     });
 
@@ -239,8 +247,9 @@ export default {
         .max(d3.max(dataDates))
         .width(this.width-margin.right+30)
         .tickFormat(timeLocale.utcFormat('%B'))
-        .tickValues(dataDates);
-
+        .tickValues(dataMonths);
+    
+    console.log(dataDates)
     // Append a new svg for the timeline within the main bar chart div. 
     const gTimeline = d3
         .select('#barchartdiv')
