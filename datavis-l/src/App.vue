@@ -134,16 +134,21 @@ h1, h2, h3 {
 }
 
 h1 {
-  font-size: 3em;
+  font-size: 2.9em;
   margin: 1em 0 0.5em 0;
 }
 
 h2 {
-  margin-top: 2em;
+  margin-top: 1.5em;
 }
 
 .home h1:first-child {
-  margin-top: 3em;
+  margin-top: 2.5em;
+}
+
+.home a {
+  color: var(--link-color);
+  text-decoration: underline;
 }
 
 p {
@@ -170,6 +175,10 @@ p.summary {
   position: fixed;
   top: 0;
   z-index: 999;
+}
+
+.top-bar a {
+  color: white;
 }
 
 .items-top-bar img.eye {
@@ -318,6 +327,7 @@ div.tooltip, div.tooltipstack {
 .gridje {
     display: grid;
     grid-template-columns: 0.24fr 1fr;
+    margin-top: 2em;
 }
 .partijselect {
     display: flex;
