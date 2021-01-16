@@ -25,3 +25,8 @@ export async function targetData() {
     const targetDashboard = await fetch(targetDashboardURL);
     return targetDashboard;
 }
+
+export async function mapGeo() {
+    const data = await d3.json("https://cartomap.github.io/nl/wgs84/provincie_2020.topojson");
+    return data; 
+}

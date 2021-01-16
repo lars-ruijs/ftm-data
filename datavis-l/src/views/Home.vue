@@ -48,6 +48,7 @@
        <p>
         Naast het kunnen targetten op leeftijdsgroep, kunnen de politieke partijen hun advertenties ook richten op specifieke provincies en geslacht van gebruikers. Hieronder kun je een provincie selecteren om vervolgens te zien in welke mate politieke partijen targetten op mannen en vrouwen en welke leeftijdsgroep populair is. 
       </p>
+      <MapBar class="marge" v-if="targetData.length > 0" :targetData="targetData"/>
   </div>
 </template>
 
@@ -55,6 +56,8 @@
 // @ is an alias to /src
 import BarChartRace from '@/components/BarChartRace.vue'
 import StackedBarChart from '@/components/StackedBarChart.vue'
+import MapBar from '@/components/MapBar.vue'
+
 
 export default {
   name: 'Home',
@@ -74,7 +77,8 @@ export default {
   },
   components: {
     BarChartRace,
-    StackedBarChart
+    StackedBarChart,
+    MapBar
   }
 }
 </script>
