@@ -190,7 +190,8 @@ export default {
         .attr("class", "tooltipstack")				
         .style("opacity", 0);
 
-        // Generate the stack layer groups (stacks of the bar chart). Set fill color to color function. 
+        // Generate the stack layer groups (stacks of the bar chart). Set fill color to color function.
+        // Source stacked bar chart: https://bl.ocks.org/LemoNode/5a64865728c6059ed89388b5f83d6b67 
         const group = svg.selectAll("g.layer")
 			.data(d3.stack().keys(keys)(data), d => d.key)
 
@@ -235,6 +236,7 @@ export default {
             .attr("height", d => y(d[0]) - y(d[1]))
          
         // Append new bars if necessary with enter().
+        // Source stacked bar chart: https://bl.ocks.org/LemoNode/5a64865728c6059ed89388b5f83d6b67 
         bars
         .enter()
         .append("rect")
@@ -324,7 +326,9 @@ export default {
         // Remove text elements that are no longer needed.
         text.exit().remove()
 
-        // Select al images with class "partijimg" - bind the data to it
+        // Set political party images as X-axis ticks. 
+        // Select al images with class "partijimg" - bind the data to it. 
+        // Source: https://stackoverflow.com/questions/24763498/d3-js-using-images-with-filenames-specified-in-data-as-tick-values-on-axis
         const images = svg.select("g.x-axis").selectAll(".partijimg")
             .data(data, d => d.partij);
 
