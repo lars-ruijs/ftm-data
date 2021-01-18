@@ -1,8 +1,9 @@
 <template>
       <div id="chartdiv">
         <div class="grid">
+            <!-- Form input bindings. Source: https://vuejs.org/v2/guide/forms.html -->
             <div>
-                <label for="age">Leeftijd taget: </label>
+                <label for="age">Leeftijd target: </label>
                 <select id="age" class="select" v-if="ages.length > 0" v-model="selectedAge">
                     <option v-for="age in ages" :key="age">
                         {{ age }}
