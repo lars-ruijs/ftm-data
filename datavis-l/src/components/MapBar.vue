@@ -250,8 +250,8 @@ export default {
     })
 
     selectOption.addEventListener('change', (e) => {
-        const age = selectOption.value;
-        makeBar(age, province)
+        ageGrp = selectOption.value;
+        makeBar(ageGrp, province)
         console.log(e);
     })
 
