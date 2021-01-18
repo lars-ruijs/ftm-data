@@ -373,7 +373,48 @@ select#age{
   font-weight: 700;
   color: #444;
 }
-
+footer {
+    text-align: center;
+    min-height: 5em;
+    background-color: #292f32;
+    margin: 3em 0 -2em 0;
+    padding: 3em;
+  }
+  footer img {
+    width: 9em;
+  }
+  footer p {
+    margin: 0;
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: #bbbbbb;
+    font-size: 0.8em;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  footer p:first-of-type {
+    margin-top: 2em;
+  }
+  footer p:nth-child(4) {
+    margin-top: 1.3em;
+  }
+  footer p:nth-child(3), footer p:nth-child(5) {
+    font-weight: normal;
+    color: #767f87;
+  }
+  .icon {
+    margin-top: 4em;
+    text-align: center;
+  }
+  .icon p {
+    color: var(--ftm-red);
+    font-size: 0.8em;
+    font-family: var(--ftm-title);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  .icon img {
+    width: 2.5em;
+  }
 @media (max-width: 1020px) { 
   nav ul li {
     font-size: 10px;

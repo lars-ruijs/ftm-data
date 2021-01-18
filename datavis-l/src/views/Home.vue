@@ -56,7 +56,18 @@
        <p>
         We hebben kunnen zien hoeveel geld de politieke partijen besteden aan online advertenties en hoe ze die advertenties kunnen targetten op specifieke doelgroepen. Maar wat is eigenlijk de inhoud van de advertenties die de partijen op Facebook en Google verspreiden? Hieronder zie je een overzicht van de meest populaire advertenties: 
        </p>
+       <div class="icon">
+          <img src="https://www.ftm.nl/assets/img/icon-investigate.svg?v2146" alt="Follow the Money">
+          <p>Platform voor onderzoeksjournalistiek</p>
+       </div>
   </div>
+  <footer>
+    <img class="logo" src="@/assets/wordmark.png" alt="Follow the Money">
+    <p>Bron data:</p>
+    <p>Google en Facebook (2020-2021)</p>
+    <p>Ontwikkeld door:</p>
+    <p> Alessandro Nedissa, Tijs van der Linden, Mohamed Lamarti en Lars Ruijs</p> 
+  </footer>
 </template>
 
 <script>

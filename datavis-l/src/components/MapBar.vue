@@ -129,7 +129,7 @@ export default {
         let padding; 
 
         if (vm.width > 320) {
-            breed = 450
+            breed = 420
             padding = 0.4;
         }
 
