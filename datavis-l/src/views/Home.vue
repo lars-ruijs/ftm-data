@@ -48,7 +48,7 @@
        <p>
         Naast het kunnen targetten op leeftijdsgroep, kunnen de politieke partijen hun advertenties ook richten op specifieke provincies en geslacht van gebruikers. Hieronder kun je een provincie selecteren om vervolgens te zien in welke mate politieke partijen targetten op mannen en vrouwen en welke leeftijdsgroep populair is. 
       </p>
-      <MapBar class="marge" v-if="targetData.length > 0" :targetData="targetData"/>
+      <MapBar v-if="targetData.length > 0" :targetData="targetData"/>
   </div>
 </template>
 

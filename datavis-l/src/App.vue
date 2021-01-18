@@ -85,13 +85,22 @@ svg {
   display: none;
 }
 
-#chartdiv svg g.y-axis g.tick text {
+svg g.y-axis g.tick text, svg g.y-as g.tick text  {
   font-size: 1.3em;
   fill: #aaaaaa;
 }
 
-#chartdiv svg g.y-axis g.tick line {
+svg g.x-as g.tick text {
+  font-size: 1.4em;
+  fill: #919191;
+}
+
+#chartdiv svg g.y-axis g.tick line, svg g.y-as g.tick line {
   stroke: #aaaaaa;
+}
+
+#barchart svg path.domain {
+  display: none;
 }
 
 .tick text {
@@ -309,6 +318,7 @@ div.tooltip, div.tooltipstack {
 .grid {
     display: grid;
     grid-template-columns: 0.24fr 1fr;
+    column-gap: 1.5em;
     margin-top: 2em;
 }
 .partijselect {
@@ -334,7 +344,7 @@ select#age{
   color: #444;
   padding: 0.5em 1.4em 0.5em 0.8em;
   margin: 0.7em 1.7em 0 0;
-  width: 9em;
+  width: 8.5em;
   border: 1px solid #aaa;
   box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
   border-radius: 0.4em;
@@ -357,6 +367,13 @@ select#age{
   font-weight:normal;
 }
 
+.targetregio {
+  font-size: 1.1em;
+  font-family: var(--ftm-graph);
+  font-weight: 700;
+  color: #444;
+}
+
 @media (max-width: 1020px) { 
   nav ul li {
     font-size: 10px;
@@ -372,7 +389,7 @@ select#age{
     width: 80%;
   }
 
-  div#chartdiv div.grid {
+  div.grid {
     grid-template-columns: 1fr;
     margin-bottom: 1.5em;
 }
