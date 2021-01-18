@@ -55,7 +55,7 @@
       <h2>Wat staat er in de meest populaire advertenties?</h2>
        <p>
         We hebben kunnen zien hoeveel geld de politieke partijen besteden aan online advertenties en hoe ze die advertenties kunnen targetten op specifieke doelgroepen. Maar wat is eigenlijk de inhoud van de advertenties die de partijen op Facebook en Google verspreiden? Hieronder zie je een overzicht van de meest populaire advertenties: 
-      </p>
+       </p>
   </div>
 </template>
 
