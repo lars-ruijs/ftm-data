@@ -46,9 +46,16 @@
       </p>
       <h2>Hoe targetten partijen op provincie, leeftijd en gender?</h2>
        <p>
-        Naast het kunnen targetten op leeftijdsgroep, kunnen de politieke partijen hun advertenties ook richten op specifieke provincies en geslacht van gebruikers. Hieronder kun je een provincie selecteren om vervolgens te zien in welke mate politieke partijen targetten op mannen en vrouwen en welke leeftijdsgroep populair is. 
+        Naast het kunnen targetten op leeftijdsgroep, kunnen de politieke partijen hun advertenties nog specifieker targetten op andere factoren. Zo is het ook mogelijk om een advertentie te richten op een bepaalde provincie en op het geslacht van een gebruiker. Hieronder kun je een provincie selecteren om vervolgens te zien in welke mate politieke partijen targetten op een specifieke leeftijdsgroep en hoe dat verdeeld is tussen mannelijke en vrouwelijke gebruikers in die provincie. Het geslacht "onbekend" is buiten beschouwing gelaten, gezien slechts een zeer klein percentage van de totale hoeveelheid weergaven naar deze doelgroep gaat.   
       </p>
-      <MapBar v-if="targetData.length > 0" :targetData="targetData"/>
+      <MapBar class="marge" v-if="targetData.length > 0" :targetData="targetData"/>
+      <p>
+        Opvallend aan de bovenstaande data is dat GroenLinks en Partij voor de Dieren hun advertenties consistent meer targetten op vrouwen dan op mannen. Daarnaast is bij partijen de provincie Zeeland het minst populair om een advertentie op te targetten. 
+      </p>
+      <h2>Wat staat er in de meest populaire advertenties?</h2>
+       <p>
+        We hebben kunnen zien hoeveel geld de politieke partijen besteden aan online advertenties en hoe ze die advertenties kunnen targetten op specifieke doelgroepen. Maar wat is eigenlijk de inhoud van de advertenties die de partijen op Facebook en Google verspreiden? Hieronder zie je een overzicht van de meest populaire advertenties: 
+      </p>
   </div>
 </template>
 
