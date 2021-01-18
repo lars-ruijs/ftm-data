@@ -25,14 +25,6 @@
         </svg>
         </div>
     </div>
-      <!-- <div id="chartdiv">
-        <label for="age">Leeftijd taget: </label>
-        <select id="age" class="select" v-if="ages.length > 0" v-model="selectedAge">
-            <option v-for="age in ages" :key="age">
-                {{ age }}
-            </option>
-        </select>
-      </div> -->
 </template>
 
 <script>
@@ -51,9 +43,6 @@ export default {
   data() {
     return {
       width: 0,
-      height: 400,
-      margin: {top: 70, left: 60, bottom: 70, right: 0},
-      ages: [],
       selectedAge: "25-34",
       province: "Noord-Holland"
     };
@@ -68,13 +57,9 @@ export default {
         window.removeEventListener('resize', this.resize);
     },
   mounted() {
-        // Build the stacked bar chart with the makeBarChart-function when element gets mounted
+        // Build the map and bar chart with the drawMapVisu-function when element gets mounted
         this.drawMapVisu();
   },
-//   updated() {
-//         // Execute the makeBarChart() function again when data is updated by user. Using the updated() lifecycle.
-//         this.makeBarChart();
-//   },
   methods: {
     
     resize() {
@@ -97,121 +82,113 @@ export default {
     },
       
     async drawMapVisu() {
-    const vm = this;
-        console.log(d3);
-        const deData = this.targetData;
-        console.log(deData);
+        //
+        // The code from here is written by my teammate Mohamed Lamarti
+        //
+        const vm = this;
+        const nlData = await mapGeo()
 
-    const nlData = await mapGeo()
+        const path = d3.geoPath()
 
-    const path = d3.geoPath()
+        const width = 280;
+        const height = 410;
 
-    const width = 280;
-    const height = 410;
+        const svg = d3.select('#map')
+        .append('svg')
+        .attr("width", width)
+        .attr("height", height)
 
-    const svg = d3.select('#map')
-    .append('svg')
-    .attr("width", width)
-    .attr("height", height)
+        const g = svg.append('g')
+        .attr("transform", "translate(-365,-25)")
 
-    
+        const projection = d3.geoMercator().scale(4000).center([5.1, 52])
+        const pathGenerator = path.projection(projection)
 
-    const g = svg.append('g')
-    .attr("transform", "translate(-365,-25)")
-
-    const projection = d3.geoMercator().scale(4000).center([5.1, 52])
-    const pathGenerator = path.projection(projection)
-
-    const provincies = feature(nlData, nlData.objects.provincie_2020);
-    
-    g
-    .append('g')
-    .attr('fill', '#d1e8ea')
-    .attr('stroke', 'white')
-    .attr("stroke-width", .9)
-    .selectAll('path')
-    .data(provincies.features)
-    .join('path')
-    .attr('class', d => d.properties.statnaam)
-    .attr('d', pathGenerator)
-    
-    
- makeBarChart()
-
- async function makeBarChart() {
-    const deData = vm.targetData.map(d => ({...d, geo: d.geo.replace("North Brabant", "Noord-Brabant")}))
-
-    const xValuePartij = deData.map(function(d) { return d.partij })
-    const xValueGender = deData.map(function(d) { return d.gender })
-
-    let breed;
-    let padding; 
-
-    if (vm.width > 320) {
-        breed = 450
-        padding = 0.4;
-    }
-
-    else if (vm.width <=320) {
-        breed = 310
-        padding = 0.3;
-    }
-    const margin = {top: 25, bottom: 20, left: 60, right: 0}
-    const innerWidth = breed - margin.left - margin.right;
-
-    let manData = []
-    let vrouwData = []
-
-    const cleanedData = deData.map(d => {
-                        if(isNaN(d["percentage totaal"])) {
-                            d["percentage totaal"] = +d["percentage totaal"].toString().replace(/,/g,".")
-                        
-                        } else {
-                            d["percentage totaal"] = +d["percentage totaal"]
-                        }
-                        return d
-                    })
-                    
-    cleanedData.forEach(d => {
-                         if(d.gender == "man"){
-                         var tempObj = {age: d.age, partij: d.partij, geo: d.geo, man: d["percentage totaal"]}
-                         manData.push(tempObj)
-                         } else {
-                            var tempObjc = {age: d.age, partij: d.partij, geo: d.geo, vrouw: d["percentage totaal"]}
-                            vrouwData.push(tempObjc)
-                         }
-                     })
-
-    const container = d3.select('#barchart')
-                     .append('svg')
-                     .attr("width", breed)
-                     .attr("height", 410)
-                     .append('g')
-                     .attr('transform', `translate(${margin.left},${margin.top})`)
-
-    const xScalePartij = d3.scaleBand()
-                     .domain(xValuePartij)
-                     .rangeRound([0, innerWidth])
-                     .padding(padding)
-
-    const xScaleGender = d3.scaleBand()
-                     .domain(xValueGender)
-                     .rangeRound([0, xScalePartij.bandwidth()])
-                     .padding(padding)
-                     
-    let yScale = d3.scaleLinear()
-                     .domain([0, 10])
-                     .range([300,0])
-
-    let yAxis = d3.axisLeft(yScale)
-                     .tickSize(-600)
-                     .tickFormat(function(d){return d+ "%"})
-
-    const yAxisG = container.append('g').call(yAxis)
-    .attr('class', 'y-as');
-
-    const yAx= container.selectAll(".y-as")
+        const provincies = feature(nlData, nlData.objects.provincie_2020);
         
+        g
+        .append('g')
+        .attr('fill', '#d1e8ea')
+        .attr('stroke', 'white')
+        .attr("stroke-width", .9)
+        .selectAll('path')
+        .data(provincies.features)
+        .join('path')
+        .attr('class', d => d.properties.statnaam)
+        .attr('d', pathGenerator)
+        
+        
+    makeBarChart()
+
+    async function makeBarChart() {
+        const deData = vm.targetData.map(d => ({...d, geo: d.geo.replace("North Brabant", "Noord-Brabant")}))
+
+        const xValuePartij = deData.map(function(d) { return d.partij })
+
+        let breed;
+        let padding; 
+
+        if (vm.width > 320) {
+            breed = 450
+            padding = 0.4;
+        }
+
+        else if (vm.width <=320) {
+            breed = 310
+            padding = 0.3;
+        }
+
+        const margin = {top: 25, bottom: 20, left: 60, right: 0}
+        const innerWidth = breed - margin.left - margin.right;
+
+        let manData = []
+        let vrouwData = []
+
+        const cleanedData = deData.map(d => {
+                            if(isNaN(d["percentage totaal"])) {
+                                d["percentage totaal"] = +d["percentage totaal"].toString().replace(/,/g,".")
+                            
+                            } else {
+                                d["percentage totaal"] = +d["percentage totaal"]
+                            }
+                            return d
+                        })
+                        
+        cleanedData.forEach(d => {
+                            if(d.gender == "man"){
+                                var tempObj = {age: d.age, partij: d.partij, geo: d.geo, man: d["percentage totaal"]}
+                                manData.push(tempObj)
+                            } else {
+                                var tempObjc = {age: d.age, partij: d.partij, geo: d.geo, vrouw: d["percentage totaal"]}
+                                vrouwData.push(tempObjc)
+                            }
+                        })
+
+        const container = d3.select('#barchart')
+                        .append('svg')
+                        .attr("width", breed)
+                        .attr("height", 410)
+                        .append('g')
+                        .attr('transform', `translate(${margin.left},${margin.top})`)
+
+        const xScalePartij = d3.scaleBand()
+                        .domain(xValuePartij)
+                        .rangeRound([0, innerWidth])
+                        .padding(padding)
+                        
+        let yScale = d3.scaleLinear()
+                        .domain([0, 10])
+                        .range([300,0])
+
+        let yAxis = d3.axisLeft(yScale)
+                        .tickSize(-600)
+                        .tickFormat(function(d){return d+ "%"})
+
+        const yAxisG = container.append('g').call(yAxis)
+        .attr('class', 'y-as');
+
+        const yAx= container.selectAll(".y-as")
+            
         yAx
         .append('text')
                 .attr('class', 'axis-label')
@@ -220,100 +197,97 @@ export default {
                 .attr("transform", `rotate(-90)`)
                 .text("Percentage weergaven naar doelgroep →");
 
-    const xAxis = d3.axisBottom(xScalePartij)
+        const xAxis = d3.axisBottom(xScalePartij)
 
-    const xAxisG = container.append('g')
-                            .call(xAxis)
-                            .attr('transform', `translate(0,305)`)
-                            .attr('class', `x-as`)
-                            .selectAll('.tick line')
-                            .remove()  
-
-    console.log(xScaleGender, xAxisG);
-    
-    const selectOption = document.getElementById("select")
-    
-    let province = "Noord-Holland";                  
-    let ageGrp = selectOption.value;
-    
-    g.selectAll('#map svg g g path')
-    .on('mouseover', () => {
-        g.selectAll(`#map svg g g path`)
-        .style("cursor", "pointer");	
-    })
-    .on('click', (d) => {
-        g.selectAll(`#map svg g g path`).attr('fill', '#d1e8ea');
-        province = d.target.className.baseVal;
-        makeBar(ageGrp, province)
-        vm.province = province; 
-        g.select(`#map svg g g path.${province}`).attr('fill', 'var(--ftm-red)');
-    })
-
-    selectOption.addEventListener('change', (e) => {
-        ageGrp = selectOption.value;
-        makeBar(ageGrp, province)
-        console.log(e);
-    })
-
-    g.select(`#map svg g g path.Noord-Holland`).attr('fill', 'var(--ftm-red)');
-    makeBar("25-34", "Noord-Holland")
-    function makeBar(selectedAge, selectedProvincie) {
+        container.append('g')
+                .call(xAxis)
+                .attr('transform', `translate(0,305)`)
+                .attr('class', `x-as`)
+                .selectAll('.tick line')
+                .remove()  
         
-        function filterArray (d) {
-            if (d.age == selectedAge && d.geo == selectedProvincie) {
-                return d;
-            }
-        } 
+        const selectOption = document.getElementById("select")
+        
+        let province = "Noord-Holland";                  
+        let ageGrp = selectOption.value;
+        
+        g.selectAll('#map svg g g path')
+        .on('mouseover', () => {
+            g.selectAll(`#map svg g g path`)
+            .style("cursor", "pointer");	
+        })
+        .on('click', (d) => {
+            g.selectAll(`#map svg g g path`).attr('fill', '#d1e8ea');
+            province = d.target.className.baseVal;
+            makeBar(ageGrp, province)
+            vm.province = province; 
+            g.select(`#map svg g g path.${province}`).attr('fill', 'var(--ftm-red)');
+        })
 
-        var newManArray = manData.filter(filterArray)
-        var newWomanArray = vrouwData.filter(filterArray)
+        selectOption.addEventListener('change', () => {
+            ageGrp = selectOption.value;
+            makeBar(ageGrp, province)
+        })
 
-        const values = newManArray.map(d => d.man).concat(newWomanArray.map(d => d.vrouw));
+        g.select(`#map svg g g path.Noord-Holland`).attr('fill', 'var(--ftm-red)');
+        makeBar("25-34", "Noord-Holland")
+        function makeBar(selectedAge, selectedProvincie) {
+            
+            function filterArray (d) {
+                if (d.age == selectedAge && d.geo == selectedProvincie) {
+                    return d;
+                }
+            } 
 
-        yScale.domain([0, d3.max(values)])
-        yAxis = d3.axisLeft(yScale)
-                  .tickSize(-600)
-                  .tickFormat(function(d){return d+ "%"})
-        yAxisG.call(yAxis)
+            var newManArray = manData.filter(filterArray)
+            var newWomanArray = vrouwData.filter(filterArray)
 
-        const rectMale = container.selectAll('.man').data(newManArray)
+            const values = newManArray.map(d => d.man).concat(newWomanArray.map(d => d.vrouw));
 
-     container
-        .selectAll('.man').transition().duration(1000)
-        .attr('y', d => yScale(d.man))
-        .attr('height', d =>300 - yScale(d.man))
-        rectMale.enter()
-        .append('rect')
-        .attr('class', 'man')
-        .attr('width', xScalePartij.bandwidth()/2)
-        .attr('height', d => 300 - yScale(d.man))
-        .attr('x', d => xScalePartij(d.partij))
-        .attr('y', d => yScale(d.man))
-        .attr('fill', "#3486B8")
+            yScale.domain([0, d3.max(values)])
+            yAxis = d3.axisLeft(yScale)
+                    .tickSize(-600)
+                    .tickFormat(function(d){return d+ "%"})
+            yAxisG.call(yAxis)
 
-        .exit().remove()
-    
-        const rectWoman = container.selectAll(".vrouw").data(newWomanArray)
-    container
-        .selectAll('.vrouw').transition().duration(1000)
-        .attr('y', d => yScale(d.vrouw))
-        .attr('height', d => 300 - yScale(d.vrouw))
-        rectWoman.enter()
-        .append('rect')
-        .attr('class', 'vrouw')
-        .attr('width', xScalePartij.bandwidth()/2)
-        .attr('height', d => 300 - yScale(d.vrouw))
-        .attr('x', d => xScalePartij(d.partij) + xScalePartij.bandwidth()/2)
-        .attr('y', d => yScale(d.vrouw))
-        .attr('fill', "#CE25BE")
+            const rectMale = container.selectAll('.man').data(newManArray)
 
-        .exit().remove()
+            container
+                .selectAll('.man').transition().duration(1000)
+                .attr('y', d => yScale(d.man))
+                .attr('height', d =>300 - yScale(d.man))
+                rectMale.enter()
+                .append('rect')
+                .attr('class', 'man')
+                .attr('width', xScalePartij.bandwidth()/2)
+                .attr('height', d => 300 - yScale(d.man))
+                .attr('x', d => xScalePartij(d.partij))
+                .attr('y', d => yScale(d.man))
+                .attr('fill', "#3486B8")
 
-        container.selectAll("g.x-as g.tick text")
-            .attr("transform", "translate(-10,0)rotate(-45)")
-            .style("text-anchor", "end");
-}
- }
+                .exit().remove()
+        
+            const rectWoman = container.selectAll(".vrouw").data(newWomanArray)
+            container
+                .selectAll('.vrouw').transition().duration(1000)
+                .attr('y', d => yScale(d.vrouw))
+                .attr('height', d => 300 - yScale(d.vrouw))
+                rectWoman.enter()
+                .append('rect')
+                .attr('class', 'vrouw')
+                .attr('width', xScalePartij.bandwidth()/2)
+                .attr('height', d => 300 - yScale(d.vrouw))
+                .attr('x', d => xScalePartij(d.partij) + xScalePartij.bandwidth()/2)
+                .attr('y', d => yScale(d.vrouw))
+                .attr('fill', "#CE25BE")
+
+                .exit().remove()
+
+            container.selectAll("g.x-as g.tick text")
+                .attr("transform", "translate(-10,0)rotate(-45)")
+                .style("text-anchor", "end");
+        }
+    }
 
     },
 }
