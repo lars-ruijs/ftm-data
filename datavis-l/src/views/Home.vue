@@ -52,10 +52,11 @@
       <p>
         Opvallend aan de bovenstaande data is dat GroenLinks en Partij voor de Dieren hun advertenties consistent meer targetten op vrouwen dan op mannen. Daarnaast is bij partijen de provincie Zeeland het minst populair om een advertentie op te targetten. 
       </p>
-      <h2>Wat staat er in de meest populaire advertenties?</h2>
+      <h2>Wat zijn de meest populaire advertenties van deze week?</h2>
        <p>
         We hebben kunnen zien hoeveel geld de politieke partijen besteden aan online advertenties en hoe ze die advertenties kunnen targetten op specifieke doelgroepen. Maar wat is eigenlijk de inhoud van de advertenties die de partijen op Facebook en Google verspreiden? Hieronder zie je een overzicht van de meest populaire advertenties: 
        </p>
+       <Ads class="marge"/>
        <div class="icon">
           <img src="https://www.ftm.nl/assets/img/icon-investigate.svg?v2146" alt="Follow the Money">
           <p>Platform voor onderzoeksjournalistiek</p>
@@ -66,7 +67,7 @@
     <p>Bron data:</p>
     <p>Google en Facebook (2020-2021)</p>
     <p>Ontwikkeld door:</p>
-    <p> Alessandro Nedissa, Tijs van der Linden, Mohamed Lamarti en Lars Ruijs</p> 
+    <p>Alessandro Nedissa, Tijs van der Linden, Mohamed Lamarti en Lars Ruijs</p> 
   </footer>
 </template>
 
@@ -75,6 +76,7 @@
 import BarChartRace from '@/components/BarChartRace.vue'
 import StackedBarChart from '@/components/StackedBarChart.vue'
 import MapBar from '@/components/MapBar.vue'
+import Ads from '@/components/Ads.vue'
 
 
 export default {
@@ -96,7 +98,8 @@ export default {
   components: {
     BarChartRace,
     StackedBarChart,
-    MapBar
+    MapBar,
+    Ads
   }
 }
 </script>
