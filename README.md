@@ -18,7 +18,7 @@ This project is part of the Information Design semester at CMD Amsterdam.
 
 <br>
 
-## ✨ The product
+## ✨  The product
 ![ftm-product](https://user-images.githubusercontent.com/60745347/104925692-6db23600-599f-11eb-8754-9fced3d79dc7.jpg)
 
 The result we delivered to Follow the Money is a dashboard in the same style as the research articles they write. The dashboard includes the following visualizations:
@@ -33,7 +33,7 @@ The graphs are rendered based on the user's screen size. As a result, the graphs
 
 <br>
 
-## 📊 Data used
+## 📊  Data used
 The data we used for this dashboard was collected and compiled by data journalists at Follow the Money. This ensures that the complex calculations for amounts spent and target groups are correct. Below is a brief overview of the data used: 
 
 **From dataset "Dag dashboard":**
@@ -61,7 +61,7 @@ This dataset was compiled by ourselves for the purpose of showing political even
 
 <br>
 
-## 🛠 Tools used
+## 🛠  Tools used
 For this project, we used the following libraries, frameworks, etc. 
 
 - **Vue**, a front-end framework that allows us to easily work in components and structure our code accordingly. 
@@ -73,7 +73,7 @@ For this project, we used the following libraries, frameworks, etc.
 
 <br>
 
-## ⬇️ Install the project
+## ⬇️  Install the project
 > ⚠️ Please obtain permission from the Follow the Money team about the use of the data and branding assets, before publishing the project online. 
 
 ### Clone the repository
@@ -84,7 +84,7 @@ git clone https://github.com/lars-ruijs/ftm-data.git
 ```
 npm install
 ```
-### Compiles and hot-reloads for development
+### Local environment for development
 ```
 npm run serve
 ``` 
@@ -93,5 +93,36 @@ npm run serve
 npm run build
 ```
 
-## 🔗 Sources
-To be updated.
+<br>
+
+## 🗒 Sources
+We have used the following sources while working on this project:
+
+### FTM
+- **The Follow the Money website** to obtain logo images.
+- **Follow the Money brand-guide** for color pallets.
+- **Google Fonts** for the Open Sans Condensed, PT Sans, PT Serif and IBM Plex Sans fonts (used by Follow the Money).
+- **Datasets on Google Sheets** collected and cleaned by data journalist Jeroen Wijnen. 
+
+### Spending over time
+- **Formatting numbers to local format** by using D3 format. Used [an article](https://observablehq.com/@d3/d3-format) on Observable by Mike Bostock and the D3 documentation on [GitHub](https://github.com/d3/d3-format#locale_format).  
+- **Formatting time to local time format** by using D3 time format. Used the D3 documentation on [GitHub](https://github.com/d3/d3-time-format#locales). 
+- **Bar chart race explained** adapted code from an example by Mike Bostock on [Observable](https://observablehq.com/@d3/bar-chart-race-explained). 
+- **Make your own Custom Bar Chart Race with D3.js** an article by ÖMER KARATAŞ on [Medium](https://medium.com/@tarsusi/make-your-own-custom-bar-chart-race-with-d3-js-b7d6cfc4d0bd). Adapted code examples on creating a start/stop button. 
+- **d3-simple-slider** a code example block by John Walley. View the example [here](https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518).
+- **D3 simple slider documentation** a plugin for D3, used for creating a working slider. Read the documentation [here](https://github.com/johnwalley/d3-simple-slider). 
+- **Creating tooltips on hover with D3** example used from bl.ocks.org. Created by user 'd3noob'. View the example [here](https://bl.ocks.org/d3noob/180287b6623496dbb5ac4b048813af52)
+- **Catch promise, when animation is interrupted**  code adapted from from a StackOverflow answer by [luschn](https://stackoverflow.com/questions/37624322/uncaught-in-promise-undefined-error-when-using-with-location-in-facebook-gra).
+- **Using this inside a function inside a mounted function** code adapted from from a StackOverflow answer by [Bert](https://stackoverflow.com/questions/47148363/when-to-use-vm-or-this-in-vue-js). 
+- **Styling a select dropdown** article by Chris Coyier on [CSS tricks](https://css-tricks.com/styling-a-select-like-its-2019/). 
+
+### Targeted spending
+- **Form input bindings in Vue** documentation article on the official [Vue website](https://vuejs.org/v2/guide/forms.html). 
+- **Stacked bar chartt** used [a code example](https://bl.ocks.org/LemoNode/5a64865728c6059ed89388b5f83d6b67) on bl.ocks.org by Robert Pettersson.
+- **Creating tooltips on hover with D3** example used from bl.ocks.org. Created by user 'd3noob'. View the example [here](https://bl.ocks.org/d3noob/180287b6623496dbb5ac4b048813af52)
+- **Set images as X-axis ticks** code adapted from from a StackOverflow answer by [morganpdx](https://stackoverflow.com/questions/24763498/d3-js-using-images-with-filenames-specified-in-data-as-tick-values-on-axis).
+
+<br>
+
+## 🔗  License
+This repository is licensed as MIT • ©️ 2021 Lars Ruijs
