@@ -415,7 +415,7 @@ footer {
   .icon img {
     width: 2.5em;
   }
-@media (max-width: 1020px) { 
+@media (max-width: 1025px) { 
   nav ul li {
     font-size: 10px;
     margin-right: 0.3em;

@@ -84,13 +84,13 @@ export default {
         padding-bottom: 2em;
     }
     .ad {
-        width: 350px;
+        width: 320px;
         max-height: 100%;
         border: 1px solid rgb(216, 216, 216);
         border-radius: 0.2em;
     }
     img {
-        width: 348px;
+        width: 318px;
         max-height: 90%;
     }
     .text {
