@@ -78,14 +78,14 @@ export default {
     const barSize = 37
     
     // Maximum number of bars
-    const n = 13
+    const n = 15
 
     // Speed between dates displayed (used for keyframes)
     // The higher the number, the slower the total duration of the animation
-    const k = 1
+    const k = 0.8
 
     // Duration between keyframes (in milliseconds)
-    const duration = 350
+    const duration = 300
 
     const height = margin.top + barSize * n + margin.bottom
 
@@ -218,7 +218,7 @@ export default {
             .attr('height', 30)
             .attr('class', 'frameslider')
         .append('g')
-            .attr('transform', 'translate(32,10)');
+            .attr('transform', 'translate(32,15)');
 
     gFrameslider.call(sliderFrame);
 
@@ -249,9 +249,9 @@ export default {
         .append('svg')
             .attr('class', 'scaledates')
             .attr('width', this.width)
-            .attr('height', 55)
+            .attr('height', 65)
         .append('g')
-            .attr('transform', 'translate(26.5,17)');
+            .attr('transform', 'translate(26.5,27)');
 
     gTimeline.call(timeline);
 
@@ -275,16 +275,18 @@ export default {
                 const cx = xTime(new Date(d.datum));
                 return cx;
             })
-            .attr('cy', "-3")
-            .attr('r', "5.5")
+            .attr('cy', "-2")
+            .attr('r', "8")
             .attr("fill", d => color(d.partij))
-            .style("opacity", 1)
+            .style("opacity", .9)
             .on("mouseover", function(event, d) {
             // On hover, display the tooltip. Source: https://bl.ocks.org/d3noob/180287b6623496dbb5ac4b048813af52
-            d3.select(this).style("opacity", .3);	
+            d3.select(this)
+                .style("opacity", .5)
+                .style("cursor", "pointer");	
             div.transition()		
                 .duration(200)		
-                .style("opacity", .9);		
+                .style("opacity", .8);		
             div.html(`${d.gebeurtenis}`)	
                 .style("left", (event.pageX - 20) + "px")		
                 .style("top", (event.pageY + 17) + "px");	
@@ -347,7 +349,7 @@ export default {
                 color = "#9C1616";                
             break;
             case "VVD":
-                color = "#FA9600";                
+                color = "#ff5600";                
             break;
             case "GroenLinks":
                 color = "#43B825";                
@@ -381,6 +383,18 @@ export default {
             break;
             case "PVV":
                 color = "#88C6C1";                
+            break;
+            case "Volt Nederland":
+                color = "#582c83";
+            break;
+            case "BIJ1":
+                color = "#000000";
+            break;
+            case "Code Oranje":
+                color = "#ee7500";
+            break;
+            case "JA21":
+                color = "#242b57";
             break;
             default:
                 color = "var(--link-color)";                
@@ -464,13 +478,11 @@ export default {
     let currentDataSetIndex = 0;
 
     function stop() {
-        console.log("STOP");
         svg.interrupt();
     }
 
     function start() {
         render(currentDataSetIndex);
-        console.log("START");
     }
 
     // Functions that are called to update the parts of the bar chart race.
@@ -503,9 +515,6 @@ export default {
                 // If frames ended, give option to replay animation.
                 d3.select(".controls").text("Afspelen");
             }
-        })
-        .on("interrupt", () => {
-            console.log("INTERRUPTED");
         });
         
         // Execute the functions that are used to update the bar chart race. 

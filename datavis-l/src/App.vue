@@ -105,7 +105,7 @@ svg g.x-as g.tick text {
 
 .tick text {
   font-family: var(--ftm-graph);
-  font-size: 1.2em;
+  font-size: 1.3em;
 }
 
 a {
@@ -236,6 +236,18 @@ nav ul li {
   display: none;
 }
 
+svg.scaledates g.tick:first-of-type {
+  display: none;
+}
+
+svg.scaledates g.parameter-value text {
+  display: none;
+}
+
+svg.scaledates g.tick:nth-of-type(2) text {
+  opacity: 1;
+}
+
 .grey {
   border: 1px solid #fff;
   background-color: #696d6f;
@@ -270,7 +282,7 @@ svg.frameslider line.track-inset {
 
 .controls {
   position: absolute;
-  bottom: 6em;
+  bottom: 6.3em;
   left: 1em;
 }
 
@@ -344,7 +356,7 @@ select#age{
   color: #444;
   padding: 0.5em 1.4em 0.5em 0.8em;
   margin: 0.7em 1.7em 0 0;
-  width: 8.5em;
+  width: 9.4em;
   border: 1px solid #aaa;
   box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
   border-radius: 0.4em;
@@ -446,6 +458,18 @@ footer {
   }
   .buttongroup .button:nth-last-child(-n+3) {
     display: none;
+  }
+ }
+
+ @media (max-width: 420px) {
+   svg.scaledates {
+    height: 95px;
+  }
+   svg.scaledates g.tick text {
+    transform: translate(-30px, 15px) rotate(-45deg);
+  }
+  .controls {
+  bottom: 8.5em;
   }
  }
 
